@@ -45,8 +45,8 @@ def insert_data(arr):
 
 
 # for loop
-pageSize = 40000
-for i in range(11, 14):
+pageSize = 2000000
+for i in range(13, 15):
     j = 0
     while True:
         sql = "SELECT * FROM class_table where class_name not like '%\_" + str(i) + "' order by class_name limit " + \
