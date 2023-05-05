@@ -683,7 +683,7 @@ default_map = {
         }
       },
       "eventdate": {
-        "type": "date"
+        "type": "text"
       },
       "eventid": {
         "type": "text",
@@ -1334,7 +1334,8 @@ default_map = {
         }
       },
       "modified": {
-        "type": "date"
+        "type": "date",
+        "format": "strict_date_optional_time||yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis"
       },
       "month": {
         "type": "text",
