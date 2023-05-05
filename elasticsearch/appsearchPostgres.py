@@ -36,7 +36,7 @@ columnarr = ["class_name", "en_name", "ch_name", "comment", "class_num"]
 # for loop
 queryPageSize = 100000
 pageSize = 100
-j = 141536400      #   17786000    57700000     97700000     137700000
+j = 157914000      #   40063700    85564600    118543600     146992000
 jend = 197700000   #   57700000    97700000    137700000     197700000
 while True:
     sql = "SELECT class_name,en_name,ch_name,comment,class_num FROM class_table limit " + str(queryPageSize) + " offset " + str(j) + ";"

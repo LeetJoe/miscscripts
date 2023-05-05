@@ -1,11 +1,13 @@
 import _csv
 
 from elasticsearch import Elasticsearch
-import csvtemp
+import csvmappings
 import csv
 import os
 
-index_name = 'neosong-test-engine-csv'
+
+# 在
+index_name = 'search-test-csv'
 
 es = Elasticsearch(
     "http://192.168.1.114:9200",
