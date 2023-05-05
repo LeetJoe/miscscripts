@@ -50,6 +50,7 @@ while True:
         print("now offset is " + str(j) + " and limit is " + str(queryPageSize) + " and we got " + str(allrowsnum))
         for item in allrows:
             allrowscount += 1
+            j += 1
             newitem = {}
             for i in range(0, 5):
                 if item[i] is None:
@@ -67,7 +68,9 @@ while True:
                     print("get None response! something may be wrong")
                 newrows = []
                 innerTurn += 1
-        j += queryPageSize
+
+            if j >= jend :   # the last turn may not cover the allrows and should stop if j reached jend
+                break
         if j >= jend :
             break
     else:
