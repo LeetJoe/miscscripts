@@ -32,5 +32,5 @@ from nltk.stem.porter import PorterStemmer
 porter = PorterStemmer()
 stemmed = [porter.stem(word) for word in words]
 
-print(stemmed[:100])
+# print(stemmed[:100])
 
