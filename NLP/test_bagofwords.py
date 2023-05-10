@@ -38,7 +38,7 @@ print(t.word_docs)
 # 对文档的编码后，向量里的位置对应于t.word_index，顺序也是以t.word_index 的顺序编排的，与文档原文顺序不一致。
 # 比如t.word_index是{'dog': 1, 'cat': 2, 'you': 3, 'phone': 4, 'i': 5, 'wolf': 6, 'love': 7}
 # 文档'I love you'的编码类似于：[0, 0, 0, 1, 0, 1, 0, 1, 0, 1]. 其中第0个位置始终是0，第一个位置是文档中dog出现的次数，以此类推。
-encoded_docs = t.texts_to_matrix(text, mode='freq')
+encoded_docs = t.texts_to_matrix(text, mode='freq')    # mode有binary, count, freq, tfidf等值
 print(encoded_docs[0])
 
 '''
