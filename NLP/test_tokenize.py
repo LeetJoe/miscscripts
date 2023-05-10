@@ -1,12 +1,12 @@
 from nltk.tokenize import word_tokenize
 
 # load data
-filename = './pg1513.txt'
+filename = './pg1513.txt'    # 电子书《罗密欧与朱丽叶》
 file = open(filename, 'rt')
 text = file.read()
 file.close()
 # split into words
-words = word_tokenize(text)
+words = word_tokenize(text)     # 比直接split分词效果好
 # words = text.split()
 
 # remove punctuation from each word
@@ -26,7 +26,8 @@ from nltk.corpus import stopwords
 stop_words = set(stopwords.words('english'))
 words = [w for w in words if not w in stop_words]
 
-# stemming of words
+# stemming of words   parts => part, united => unit
+# 并不是完全按照字典来的，比如anyone会变成anyon, anywhere会变成anywher。
 from nltk.stem.porter import PorterStemmer
 porter = PorterStemmer()
 stemmed = [porter.stem(word) for word in words]
