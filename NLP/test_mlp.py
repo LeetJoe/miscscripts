@@ -20,6 +20,5 @@ model.add(Flatten())
 model.add(Dense(10, activation='relu'))
 model.add(Dense(1, activation='sigmoid'))
 
-# TODO: 一个model里面加这么多模型做什么？Sequential，是指定义一个model序列用于处理输入？
 model.summary()
 
