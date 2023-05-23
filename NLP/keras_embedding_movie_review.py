@@ -1,0 +1,177 @@
+
+import string
+
+from os import listdir
+
+from movie_review_vocab import load_doc, init_vocab, load_vocab
+
+from keras.preprocessing.text import Tokenizer
+from keras.utils import pad_sequences
+from keras.models import Sequential
+from keras.layers import Dense
+from keras.layers import Flatten
+from keras.layers import Embedding
+from keras.layers.convolutional import Conv1D
+from keras.layers.convolutional import MaxPooling1D
+
+from numpy import array
+
+# turn a doc into clean tokens, 与bog相比：1. 没有去掉非alphabetic；2. 没有去掉stop words; 3. 没有去掉只有一个字符的token。
+def clean_doc(doc, vocab):
+    # split into tokens by white space
+    tokens = doc.split()
+    # remove punctuation from each token
+    table = str.maketrans('', '', string.punctuation)
+    tokens = [w.translate(table) for w in tokens]
+
+    # filter out tokens not in vocab
+    tokens = [w for w in tokens if w in vocab]
+    tokens = ' '.join(tokens)
+    return tokens
+
+
+# turn a doc into clean tokens
+def doc_to_clean_lines(doc, vocab):
+    clean_lines = list()
+    lines = doc.splitlines()
+    for line in lines:
+        # split into tokens by white space
+        tokens = line.split()
+        # remove punctuation from each token
+        table = str.maketrans('', '', string.punctuation)
+        tokens = [w.translate(table) for w in tokens]
+        # filter out tokens not in vocab
+        tokens = [w for w in tokens if w in vocab]
+        clean_lines.append(tokens)
+    return clean_lines
+
+
+# load docs in dir and convert them into space separated lines
+def docs_to_lines(directory, vocab, is_train=False):
+    lines = list()
+    # walk through all files in the folder
+    for filename in listdir(directory):
+        # skip any reviews in the test set, 非训练模式只取cv9开头的100个文件，训练模式使用其它900个文件。
+        if is_train and filename.startswith('cv9'):
+            continue
+        if not is_train and not filename.startswith('cv9'):
+            continue
+        # skip files that do not have the right extension
+        if not filename.endswith(".txt"):
+            continue
+        # create the full path of the file to open
+        path = directory + '/' + filename
+        # load and clean the doc
+        doc_lines = doc_to_clean_lines(path, vocab)
+        # add to list
+        lines += doc_lines
+    return lines
+
+
+def prepare_sequence():
+    # load all training reviews
+    positive_lines = load_doc('positive.txt').split('\n')
+    negative_lines = load_doc('negative.txt').split('\n')
+    train_docs = negative_lines + positive_lines
+
+    # create the tokenizer
+    tokenizer = Tokenizer()
+    # fit the tokenizer on the documents
+    tokenizer.fit_on_texts(train_docs)
+
+    # sequence encode
+    encoded_docs = tokenizer.texts_to_sequences(train_docs)
+    # pad sequences
+    max_length = max([len(s.split()) for s in train_docs])
+    Xtrain = pad_sequences(encoded_docs, maxlen=max_length, padding='post')
+    # define training labels
+    ytrain = array([0 for _ in range(900)] + [1 for _ in range(900)])
+
+    # load all test reviews
+    positive_lines = load_doc('positive_sample.txt').split('\n')
+    negative_lines = load_doc('negative_sample.txt').split('\n')
+    test_docs = negative_lines + positive_lines
+    # sequence encode
+    encoded_docs = tokenizer.texts_to_sequences(test_docs)
+    # pad sequences
+    Xtest = pad_sequences(encoded_docs, maxlen=max_length, padding='post')
+    # define test labels
+    ytest = array([0 for _ in range(100)] + [1 for _ in range(100)])
+
+    # define vocabulary size (largest integer value)
+    vocab_size = len(tokenizer.word_index) + 1
+
+    return tokenizer, Xtrain, ytrain, Xtest, ytest, max_length, vocab_size
+
+
+
+# 使用Embedding layer + Conv1D layer + MaxPooling1D layer + Flatten layer + Dense + Dense 的模型
+def train_a_model(Xtrain, ytrain, max_length, vocab_size):
+    # define model
+    model = Sequential()
+    model.add(Embedding(vocab_size, 100, input_length=max_length))
+    model.add(Conv1D(filters=32, kernel_size=8, activation='relu'))
+    model.add(MaxPooling1D(pool_size=2))
+    model.add(Flatten())
+    model.add(Dense(10, activation='relu'))
+    model.add(Dense(1, activation='sigmoid'))
+    # print(model.summary())
+    # compile network
+    model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+    # fit network
+    model.fit(Xtrain, ytrain, epochs=10, verbose=2)
+
+    return model
+
+
+def multi_train_and_test():
+    tokenizer, Xtrain, ytrain, Xtest, ytest, max_length, vocab_size = prepare_sequence()
+
+    n_repeats = 8
+    total_acc = 0
+    for i in range(n_repeats):
+        model = train_a_model(Xtrain, ytrain, max_length, vocab_size)
+
+        # evaluate
+        loss, acc = model.evaluate(Xtest, ytest, verbose=0)
+        total_acc += acc
+        print('Test Accuracy of turn %s/%d: %f' % (str(i+1).zfill(2), n_repeats, acc*100))
+
+    print('Average accuracy is: %f' % (total_acc / n_repeats * 100))
+
+
+
+# classify a review as negative (0) or positive (1)
+# TODO: 这种方法的predict可能不是这么用的，继续看文章。
+def predict_sentiment(review, vocab, tokenizer, model):
+    """
+    Args:
+        review: doc in string
+        vocab: vocab in list
+    """
+    # clean
+    tokens = clean_doc(review, vocab)
+    # filter by vocab
+    tokens = [w for w in tokens if w in vocab]
+    # convert to line
+    line = ' '.join(tokens)
+    # encode
+    encoded = tokenizer.texts_to_matrix([line], mode='freq')
+    # prediction
+    yhat = model.predict(encoded, verbose=0)
+    print(yhat)
+    return round(yhat[0,0])
+
+
+
+tokenizer, Xtrain, ytrain, Xtest, ytest, max_length, vocab_size = prepare_sequence()
+model = train_a_model(Xtrain, ytrain, max_length, vocab_size)
+
+vocab = load_vocab()
+
+
+# TODO: 这里报错了。
+print(predict_sentiment('This is a very good movie!', vocab, tokenizer, model))
+
+print(predict_sentiment('This is a bad movie.', vocab, tokenizer, model))
+
