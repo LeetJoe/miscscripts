@@ -30,44 +30,6 @@ def clean_doc(doc, vocab):
     return tokens
 
 
-# turn a doc into clean tokens
-def doc_to_clean_lines(doc, vocab):
-    clean_lines = list()
-    lines = doc.splitlines()
-    for line in lines:
-        # split into tokens by white space
-        tokens = line.split()
-        # remove punctuation from each token
-        table = str.maketrans('', '', string.punctuation)
-        tokens = [w.translate(table) for w in tokens]
-        # filter out tokens not in vocab
-        tokens = [w for w in tokens if w in vocab]
-        clean_lines.append(tokens)
-    return clean_lines
-
-
-# load docs in dir and convert them into space separated lines
-def docs_to_lines(directory, vocab, is_train=False):
-    lines = list()
-    # walk through all files in the folder
-    for filename in listdir(directory):
-        # skip any reviews in the test set, 非训练模式只取cv9开头的100个文件，训练模式使用其它900个文件。
-        if is_train and filename.startswith('cv9'):
-            continue
-        if not is_train and not filename.startswith('cv9'):
-            continue
-        # skip files that do not have the right extension
-        if not filename.endswith(".txt"):
-            continue
-        # create the full path of the file to open
-        path = directory + '/' + filename
-        # load and clean the doc
-        doc_lines = doc_to_clean_lines(path, vocab)
-        # add to list
-        lines += doc_lines
-    return lines
-
-
 def prepare_sequence():
     # load all training reviews
     positive_lines = load_doc('positive.txt').split('\n')

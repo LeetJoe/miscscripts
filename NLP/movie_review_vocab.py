@@ -89,6 +89,7 @@ def load_vocab():
 
 
 # load doc, clean and return line of tokens
+# bag of word 格式的文件处理
 def doc_to_line(filename, vocab):
     # load the doc
     doc = load_doc(filename)
@@ -100,6 +101,7 @@ def doc_to_line(filename, vocab):
 
 
 # load docs in dir and convert them into space separated lines
+# bag of word 格式的文件处理
 def docs_to_lines(directory, vocab, is_train=False):
     lines = list()
     # walk through all files in the folder
@@ -122,6 +124,7 @@ def docs_to_lines(directory, vocab, is_train=False):
 
 
 # convert the docs into lines and save them into file
+# bag of word 格式的文件保存
 def save_lines_to_file(is_train=False):
     vocab = load_vocab()
 
@@ -136,4 +139,64 @@ def save_lines_to_file(is_train=False):
     save_list(negative_lines, neg_filename)
     # prepare positive reviews
     positive_lines = docs_to_lines('txt_sentoken/pos', vocab, is_train)
+    save_list(positive_lines, pos_filename)
+
+
+# turn a doc into clean tokens
+# keras embedding 格式的文件处理
+def doc_to_clean_lines(doc, vocab):
+    clean_lines = list()
+    lines = doc.splitlines()
+    for line in lines:
+        # split into tokens by white space
+        tokens = line.split()
+        # remove punctuation from each token
+        table = str.maketrans('', '', string.punctuation)
+        tokens = [w.translate(table) for w in tokens]
+        # filter out tokens not in vocab
+        tokens = [w for w in tokens if w in vocab]
+        clean_lines.append(tokens)
+    return clean_lines
+
+
+# load docs in dir and convert them into space separated lines
+# keras embedding 格式的文件处理
+def docs_to_clean_lines(directory, vocab, is_train=False):
+    lines = list()
+    # walk through all files in the folder
+    for filename in listdir(directory):
+        # skip any reviews in the test set, 非训练模式只取cv9开头的100个文件，训练模式使用其它900个文件。
+        if is_train and filename.startswith('cv9'):
+            continue
+        if not is_train and not filename.startswith('cv9'):
+            continue
+        # skip files that do not have the right extension
+        if not filename.endswith(".txt"):
+            continue
+        # create the full path of the file to open
+        path = directory + '/' + filename
+        # load and clean the doc
+        doc = load_doc(path)
+        doc_lines = doc_to_clean_lines(doc, vocab)
+        # add to list
+        lines += doc_lines
+    return lines
+
+
+# convert the docs into lines and save them into file
+# keras embedding 格式的文件保存
+def save_clean_lines_to_file(is_train=False):
+    vocab = load_vocab()
+
+    # prepare negative reviews
+    if not is_train:
+        neg_filename = 'emb_negative_sample.txt'
+        pos_filename = 'emb_positive_sample.txt'
+    else:
+        neg_filename = 'emb_negative.txt'
+        pos_filename = 'emb_positive.txt'
+    negative_lines = docs_to_clean_lines('txt_sentoken/neg', vocab, is_train)
+    save_list(negative_lines, neg_filename)
+    # prepare positive reviews
+    positive_lines = docs_to_clean_lines('txt_sentoken/pos', vocab, is_train)
     save_list(positive_lines, pos_filename)
