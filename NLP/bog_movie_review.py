@@ -3,7 +3,7 @@ from keras.preprocessing.text import Tokenizer
 from keras.models import Sequential
 from keras.layers import Dense
 
-from movie_review_vocab import load_doc, clean_doc, init_vocab, load_vocab
+from movie_review_vocab import load_doc, doc_to_line, init_vocab, load_vocab, save_lines_to_file
 
 from numpy import array
 
@@ -69,18 +69,15 @@ def multi_train_and_test():
 
 
 # classify a review as negative (0) or positive (1)
-def predict_sentiment(review, vocab, tokenizer, model):
+def predict_sentiment(review, tokenizer, model):
     """
     Args:
         review: doc in string
         vocab: vocab in list
     """
-    # clean
-    tokens = clean_doc(review)
-    # filter by vocab
-    tokens = [w for w in tokens if w in vocab]
-    # convert to line
-    line = ' '.join(tokens)
+
+    vocab = load_vocab()
+    line = doc_to_line(review, vocab)
     # encode
     encoded = tokenizer.texts_to_matrix([line], mode='freq')
     # prediction
@@ -89,12 +86,15 @@ def predict_sentiment(review, vocab, tokenizer, model):
     return round(yhat[0,0])
 
 
+# init_vocab()
+# save_lines_to_file(True)
+# save_lines_to_file(False)
+
 tokenizer, Xtrain, Xtest, ytrain, ytest, n_words = prepare_matrix('freq')
 model = train_a_model(n_words, Xtrain, ytrain)
-vocab = load_vocab()
 
-print(predict_sentiment('This is a very good movie!', vocab, tokenizer, model))
+print(predict_sentiment('This is a very good movie!', tokenizer, model))
 
-print(predict_sentiment('This is a bad movie.', vocab, tokenizer, model))
+print(predict_sentiment('This is a bad movie.', tokenizer, model))
 
 

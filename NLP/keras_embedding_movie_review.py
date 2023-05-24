@@ -1,9 +1,6 @@
 
-import string
 
-from os import listdir
-
-from movie_review_vocab import load_doc, init_vocab, load_vocab
+from movie_review_vocab import load_doc, init_vocab, save_lines_to_file
 
 from keras.preprocessing.text import Tokenizer
 from keras.utils import pad_sequences
@@ -16,25 +13,16 @@ from keras.layers.convolutional import MaxPooling1D
 
 from numpy import array
 
-# turn a doc into clean tokens, 与bog相比：1. 没有去掉非alphabetic；2. 没有去掉stop words; 3. 没有去掉只有一个字符的token。
-def clean_doc(doc, vocab):
-    # split into tokens by white space
-    tokens = doc.split()
-    # remove punctuation from each token
-    table = str.maketrans('', '', string.punctuation)
-    tokens = [w.translate(table) for w in tokens]
-
-    # filter out tokens not in vocab
-    tokens = [w for w in tokens if w in vocab]
-    tokens = ' '.join(tokens)
-    return tokens
-
-
 def prepare_sequence():
     # load all training reviews
     positive_lines = load_doc('positive.txt').split('\n')
     negative_lines = load_doc('negative.txt').split('\n')
     train_docs = negative_lines + positive_lines
+
+    # load all test reviews
+    positive_lines = load_doc('positive_sample.txt').split('\n')
+    negative_lines = load_doc('negative_sample.txt').split('\n')
+    test_docs = negative_lines + positive_lines
 
     # create the tokenizer
     tokenizer = Tokenizer()
@@ -47,18 +35,14 @@ def prepare_sequence():
     max_length = max([len(s.split()) for s in train_docs])
     Xtrain = pad_sequences(encoded_docs, maxlen=max_length, padding='post')
     # define training labels
-    ytrain = array([0 for _ in range(900)] + [1 for _ in range(900)])
+    ytrain = array([0 for _ in range(int(Xtrain.shape[0]/2))] + [1 for _ in range(int(Xtrain.shape[0]/2))])
 
-    # load all test reviews
-    positive_lines = load_doc('positive_sample.txt').split('\n')
-    negative_lines = load_doc('negative_sample.txt').split('\n')
-    test_docs = negative_lines + positive_lines
     # sequence encode
     encoded_docs = tokenizer.texts_to_sequences(test_docs)
     # pad sequences
     Xtest = pad_sequences(encoded_docs, maxlen=max_length, padding='post')
     # define test labels
-    ytest = array([0 for _ in range(100)] + [1 for _ in range(100)])
+    ytest = array([0 for _ in range(int(Xtest.shape[0]/2))] + [1 for _ in range(int(Xtest.shape[0]/2))])
 
     # define vocabulary size (largest integer value)
     vocab_size = len(tokenizer.word_index) + 1
@@ -101,6 +85,10 @@ def multi_train_and_test():
 
     print('Average accuracy is: %f' % (total_acc / n_repeats * 100))
 
+
+# init_vocab()
+# save_lines_to_file(True)
+# save_lines_to_file(False)
 
 multi_train_and_test()
 

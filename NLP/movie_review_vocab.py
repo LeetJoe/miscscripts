@@ -15,8 +15,8 @@ def load_doc(filename):
         return text
 
 
-# turn a doc into clean tokens
-def clean_doc(doc):
+# turn a doc into clean tokens, in order to init the vocab
+def clean_doc_for_vocab(doc):
     # split into tokens by white space
     tokens = doc.split()
     # remove punctuation from each token
@@ -31,13 +31,12 @@ def clean_doc(doc):
     tokens = [word for word in tokens if len(word) > 1]
     return tokens
 
-
 # load doc and add to vocab
 def add_doc_to_vocab(filename, vocab):
     # load doc
     doc = load_doc(filename)
     # clean doc
-    tokens = clean_doc(doc)
+    tokens = clean_doc_for_vocab(doc)
     # update counts
     vocab.update(tokens)
 
@@ -88,21 +87,29 @@ def load_vocab():
     return set(vocab)
 
 
-# load doc, clean and return line of tokens
-# bag of word 格式的文件处理
-def doc_to_line(filename, vocab):
+# clean doc with vocab and convert doc into string of space separated tokens
+def doc_to_line(text, vocab):
+    # split into tokens by white space
+    tokens = text.split()
+    # remove punctuation from each token
+    table = str.maketrans('', '', string.punctuation)
+    tokens = [w.translate(table) for w in tokens]
+
+    # filter out tokens not in vocab
+    tokens = [w for w in tokens if w in vocab]
+    tokens = ' '.join(tokens)
+    return tokens
+
+
+# clean doc with vocab and convert doc into string of space separated tokens
+def file_to_line(filename, vocab):
     # load the doc
     doc = load_doc(filename)
-    # clean doc
-    tokens = clean_doc(doc)
-    # filter by vocab
-    tokens = [w for w in tokens if w in vocab]
-    return ' '.join(tokens)
-
+    return doc_to_line(doc, vocab)
 
 # load docs in dir and convert them into space separated lines
 # bag of word 格式的文件处理
-def docs_to_lines(directory, vocab, is_train=False):
+def files_to_lines(directory, vocab, is_train=False):
     lines = list()
     # walk through all files in the folder
     for filename in listdir(directory):
@@ -117,7 +124,7 @@ def docs_to_lines(directory, vocab, is_train=False):
         # create the full path of the file to open
         path = directory + '/' + filename
         # load and clean the doc
-        line = doc_to_line(path, vocab)
+        line = file_to_line(path, vocab)
         # add to list
         lines.append(line)
     return lines
@@ -135,15 +142,19 @@ def save_lines_to_file(is_train=False):
     else:
         neg_filename = 'negative.txt'
         pos_filename = 'positive.txt'
-    negative_lines = docs_to_lines('txt_sentoken/neg', vocab, is_train)
+    negative_lines = files_to_lines('txt_sentoken/neg', vocab, is_train)
     save_list(negative_lines, neg_filename)
     # prepare positive reviews
-    positive_lines = docs_to_lines('txt_sentoken/pos', vocab, is_train)
+    positive_lines = files_to_lines('txt_sentoken/pos', vocab, is_train)
     save_list(positive_lines, pos_filename)
 
 
+
+
+
+# TODO
+
 # turn a doc into clean tokens
-# keras embedding 格式的文件处理
 def doc_to_clean_lines(doc, vocab):
     clean_lines = list()
     lines = doc.splitlines()
@@ -160,7 +171,6 @@ def doc_to_clean_lines(doc, vocab):
 
 
 # load docs in dir and convert them into space separated lines
-# keras embedding 格式的文件处理
 def docs_to_clean_lines(directory, vocab, is_train=False):
     lines = list()
     # walk through all files in the folder
@@ -184,7 +194,6 @@ def docs_to_clean_lines(directory, vocab, is_train=False):
 
 
 # convert the docs into lines and save them into file
-# keras embedding 格式的文件保存
 def save_clean_lines_to_file(is_train=False):
     vocab = load_vocab()
 
@@ -200,3 +209,5 @@ def save_clean_lines_to_file(is_train=False):
     # prepare positive reviews
     positive_lines = docs_to_clean_lines('txt_sentoken/pos', vocab, is_train)
     save_list(positive_lines, pos_filename)
+
+
