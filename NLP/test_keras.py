@@ -102,8 +102,8 @@ use_GloVe = True
 if use_GloVe:   # 如何使用 Pre-Trained GloVe Embedding
     embeddings_index = dict()
 
-    # 数据去GloVe（Global Vector）https://github.com/stanfordnlp/GloVe 项目里找，这里不下载了。
-    f = open('../glove_data/glove.6B/glove.6B.100d.txt')
+    # 数据去GloVe（Global Vector）https://github.com/stanfordnlp/GloVe 项目里找。
+    f = open('glove_6B/glove.6B.100d.txt')
     for line in f:
      values = line.split()
      word = values[0]

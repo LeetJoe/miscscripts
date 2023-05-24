@@ -1,8 +1,30 @@
-from gensim.models import Word2Vec
+
 from sklearn.decomposition import PCA
 from matplotlib import pyplot
+from gensim.models import KeyedVectors
+from gensim.models import Word2Vec
+from gensim.scripts.glove2word2vec import glove2word2vec
 
-import test_tokenize
+
+# load pretrained model
+def load_google_pretrain_and_test():
+    filename = 'GoogleNews-vectors-negative300.bin'
+    model = KeyedVectors.load_word2vec_format(filename, binary=True)
+
+    # calculate: (king - man) + woman = ?
+    result = model.most_similar(positive=['woman', 'king'], negative=['man'], topn=1)
+    print(result)
+
+def load_stanford_glove_and_test():
+    glove_input_file = 'glove_6B/glove.6B.100d.txt'
+    word2vec_output_file = 'glove_6B/glove.6B.100d.txt.word2vec'
+    glove2word2vec(glove_input_file, word2vec_output_file)
+    model = KeyedVectors.load_word2vec_format(word2vec_output_file, binary=False)
+    # calculate: (king - man) + woman = ?
+    result = model.most_similar(positive=['woman', 'king'], negative=['man'], topn=1)
+    print(result)
+
+
 
 # define training data
 sentences = [['this', 'is', 'the', 'first', 'sentence', 'for', 'word2vec'],
@@ -13,16 +35,24 @@ sentences = [['this', 'is', 'the', 'first', 'sentence', 'for', 'word2vec'],
 # test_tokenize.stemmed
 ]
 
+
 # train model
 model = Word2Vec(sentences, min_count=1)
-
-# summarize the loaded model
-# print(model)
 
 # summarize vocabulary
 words = list(model.wv.key_to_index)
 # print(len(words))
 # print(words)
+
+# access vector for one word, instead of model['sentence'] in old version
+# print(model.wv.get_vector('sentence'))
+# save model
+model.save('model.bin')
+# load model
+new_model = Word2Vec.load('model.bin')
+
+# summarize the loaded model
+# print(model)
 
 X = [model.wv[word] for i, word in enumerate(words)]
 
@@ -35,7 +65,7 @@ result = pca.fit_transform(X)   # shape of [wordcount, 2]
 pyplot.scatter(result[:, 0], result[:, 1])
 for i, word in enumerate(words):
     pyplot.annotate(word, xy=(result[i, 0], result[i, 1]))
-pyplot.show()
+pyplot.show()   # 需要图形化界面支持，纯命令行环境无法展示窗口和图表。
 
 
 # access vector for one word

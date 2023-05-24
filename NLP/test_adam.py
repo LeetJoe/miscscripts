@@ -94,7 +94,7 @@ def adam(objective, derivative, bounds, n_iter, alpha, beta1, beta2, eps=1e-8):
 
 
 # seed the pseudo random number generator
-seed(928374)
+seed(1)
 # define range for input
 bounds = asarray([[-1.0, 1.0], [-1.0, 1.0]])
 
