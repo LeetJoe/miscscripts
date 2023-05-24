@@ -17,6 +17,7 @@ from keras.layers import Embedding
 from keras.layers.convolutional import Conv1D
 from keras.layers.convolutional import MaxPooling1D
 
+dim = 300
 
 def prepare_sequence():
     # load all training reviews
@@ -58,11 +59,15 @@ def prepare_sequence():
 # 使用Embedding layer + Conv1D layer + MaxPooling1D layer + Flatten layer + Dense + Dense 的模型
 def train_a_model(tokenizer, Xtrain, ytrain, max_length, vocab_size):
     # load embedding from file
-    raw_embedding = load_embedding('embedding_word2vec.txt')
+    # raw_embedding = load_embedding('embedding_word2vec.txt')
+
+    # 使用 glove_6B/glove.6B.100d.txt 结果正确率在75%左右，略有提升; 使用 300B 结果高于80%一点，比100B略好。
+    # glove_6B里的100d, 300d表示vector dimension，选用不同的dimension要相应的调整一些代码参数，如Embedding()函数的第二个参数等。
+    raw_embedding = load_embedding('glove_6B/glove.6B.300d.txt')
     # get vectors in the right order
     embedding_vectors = get_weight_matrix(raw_embedding, tokenizer.word_index)
-    # create the embedding layer
-    embedding_layer = Embedding(vocab_size, 100, weights=[embedding_vectors], input_length=max_length, trainable=False)
+    # create the embedding layer, if trainable is true, the result may be a little better.
+    embedding_layer = Embedding(vocab_size, dim, weights=[embedding_vectors], input_length=max_length, trainable=True)
 
     # define model
     model = Sequential()
@@ -103,7 +108,8 @@ def save_word2wec_embedding(filename):
 def load_embedding(filename):
     # load embedding into memory, skip first line
     file = open(filename,'r')
-    lines = file.readlines()[1:]
+    # lines = file.readlines()[1:]   # 自己训练的word embedding使用这句
+    lines = file.readlines()   # 使用glove embedding使用这句
     file.close()
     # create a map of words to vectors
     embedding = dict()
@@ -118,11 +124,15 @@ def load_embedding(filename):
 def get_weight_matrix(embedding, vocab):
     # total vocabulary size plus 0 for unknown words
     vocab_size = len(vocab) + 1
-    # define weight matrix dimensions with all 0
-    weight_matrix = zeros((vocab_size, 100))
+    # define weight matrix dimensions with all 0, 第二个参数数字是 vector_size，选用不同的word embedding要修改此值。
+    weight_matrix = zeros((vocab_size, dim))
     # step vocab, store vectors using the Tokenizer's integer mapping
     for word, i in vocab.items():
-        weight_matrix[i] = embedding.get(word)
+        vector = embedding.get(word)
+        # 这里对word进行判断，如果选择的embedding中没有word，将其加入到weight_matrix会严重影响准确度。使用其它来源的embedding
+        # 的话，要进行这一步判断。
+        if vector is not None:
+            weight_matrix[i] = vector
     return weight_matrix
 
 
