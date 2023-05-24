@@ -140,38 +140,5 @@ def multi_train_and_test():
     print('Average accuracy is: %f' % (total_acc / n_repeats * 100))
 
 
-
-# classify a review as negative (0) or positive (1)
-# TODO: 这种方法的predict可能不是这么用的，继续看文章。
-def predict_sentiment(review, vocab, tokenizer, model):
-    """
-    Args:
-        review: doc in string
-        vocab: vocab in list
-    """
-    # clean
-    tokens = clean_doc(review, vocab)
-    # filter by vocab
-    tokens = [w for w in tokens if w in vocab]
-    # convert to line
-    line = ' '.join(tokens)
-    # encode
-    encoded = tokenizer.texts_to_matrix([line], mode='freq')
-    # prediction
-    yhat = model.predict(encoded, verbose=0)
-    print(yhat)
-    return round(yhat[0,0])
-
-
-
-tokenizer, Xtrain, ytrain, Xtest, ytest, max_length, vocab_size = prepare_sequence()
-model = train_a_model(Xtrain, ytrain, max_length, vocab_size)
-
-vocab = load_vocab()
-
-
-# TODO: 这里报错了。
-print(predict_sentiment('This is a very good movie!', vocab, tokenizer, model))
-
-print(predict_sentiment('This is a bad movie.', vocab, tokenizer, model))
+multi_train_and_test()
 
