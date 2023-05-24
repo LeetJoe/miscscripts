@@ -1,5 +1,6 @@
 
 import string
+import json
 from collections import Counter
 from nltk.corpus import stopwords
 from os import listdir
@@ -55,11 +56,16 @@ def docs_to_vocab(directory, vocab):
         add_doc_to_vocab(path, vocab)
 
 
-def save_list(lines, filename):
-    data = '\n'.join(lines)
-    file = open(filename, 'w')
-    file.write(data)
-    file.close()
+def save_list_in_lines(lines, filename):
+    doc = '\n'.join(lines)
+    with open(filename, 'w') as file:
+        file.write(doc)
+        file.close()
+
+def save_list_in_json(list, filename):
+    with open(filename, "w") as file:
+        json.dump(list, file)
+        file.close()
 
 
 # init the vocab and save it into file
@@ -76,7 +82,7 @@ def init_vocab():
     # print(len(tokens))
 
     # save tokens to a vocabulary file
-    save_list(tokens, 'vocab.txt')
+    save_list_in_lines(tokens, 'vocab.txt')
 
 
 def load_vocab():
@@ -143,19 +149,14 @@ def save_lines_to_file(is_train=False):
         neg_filename = 'negative.txt'
         pos_filename = 'positive.txt'
     negative_lines = files_to_lines('txt_sentoken/neg', vocab, is_train)
-    save_list(negative_lines, neg_filename)
+    save_list_in_lines(negative_lines, neg_filename)
     # prepare positive reviews
     positive_lines = files_to_lines('txt_sentoken/pos', vocab, is_train)
-    save_list(positive_lines, pos_filename)
+    save_list_in_lines(positive_lines, pos_filename)
 
-
-
-
-
-# TODO
 
 # turn a doc into clean tokens
-def doc_to_clean_lines(doc, vocab):
+def doc_to_lines(doc, vocab):
     clean_lines = list()
     lines = doc.splitlines()
     for line in lines:
@@ -171,7 +172,7 @@ def doc_to_clean_lines(doc, vocab):
 
 
 # load docs in dir and convert them into space separated lines
-def docs_to_clean_lines(directory, vocab, is_train=False):
+def files_to_clean_lines(directory, vocab, is_train=False):
     lines = list()
     # walk through all files in the folder
     for filename in listdir(directory):
@@ -187,27 +188,28 @@ def docs_to_clean_lines(directory, vocab, is_train=False):
         path = directory + '/' + filename
         # load and clean the doc
         doc = load_doc(path)
-        doc_lines = doc_to_clean_lines(doc, vocab)
+        doc_lines = doc_to_lines(doc, vocab)
         # add to list
         lines += doc_lines
     return lines
 
 
 # convert the docs into lines and save them into file
+# 用于 Word2Vec 的模型
 def save_clean_lines_to_file(is_train=False):
     vocab = load_vocab()
 
     # prepare negative reviews
     if not is_train:
-        neg_filename = 'emb_negative_sample.txt'
-        pos_filename = 'emb_positive_sample.txt'
+        neg_filename = 'w2v_negative_sample.txt'
+        pos_filename = 'w2v_positive_sample.txt'
     else:
-        neg_filename = 'emb_negative.txt'
-        pos_filename = 'emb_positive.txt'
-    negative_lines = docs_to_clean_lines('txt_sentoken/neg', vocab, is_train)
-    save_list(negative_lines, neg_filename)
+        neg_filename = 'w2v_negative.txt'
+        pos_filename = 'w2v_positive.txt'
+    negative_lines = files_to_clean_lines('txt_sentoken/neg', vocab, is_train)
+    save_list_in_json(negative_lines, neg_filename)
     # prepare positive reviews
-    positive_lines = docs_to_clean_lines('txt_sentoken/pos', vocab, is_train)
-    save_list(positive_lines, pos_filename)
+    positive_lines = files_to_clean_lines('txt_sentoken/pos', vocab, is_train)
+    save_list_in_json(positive_lines, pos_filename)
 
 

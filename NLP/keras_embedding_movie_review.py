@@ -1,7 +1,13 @@
 
+import json
 
-from movie_review_vocab import load_doc, init_vocab, save_lines_to_file
+from numpy import array
+from numpy import asarray
+from numpy import zeros
 
+from movie_review_vocab import load_doc, init_vocab, save_clean_lines_to_file, save_lines_to_file
+
+from gensim.models import Word2Vec
 from keras.preprocessing.text import Tokenizer
 from keras.utils import pad_sequences
 from keras.models import Sequential
@@ -11,7 +17,6 @@ from keras.layers import Embedding
 from keras.layers.convolutional import Conv1D
 from keras.layers.convolutional import MaxPooling1D
 
-from numpy import array
 
 def prepare_sequence():
     # load all training reviews
@@ -50,18 +55,25 @@ def prepare_sequence():
     return tokenizer, Xtrain, ytrain, Xtest, ytest, max_length, vocab_size
 
 
-
 # 使用Embedding layer + Conv1D layer + MaxPooling1D layer + Flatten layer + Dense + Dense 的模型
-def train_a_model(Xtrain, ytrain, max_length, vocab_size):
+def train_a_model(tokenizer, Xtrain, ytrain, max_length, vocab_size):
+    # load embedding from file
+    raw_embedding = load_embedding('embedding_word2vec.txt')
+    # get vectors in the right order
+    embedding_vectors = get_weight_matrix(raw_embedding, tokenizer.word_index)
+    # create the embedding layer
+    embedding_layer = Embedding(vocab_size, 100, weights=[embedding_vectors], input_length=max_length, trainable=False)
+
     # define model
     model = Sequential()
-    model.add(Embedding(vocab_size, 100, input_length=max_length))
-    model.add(Conv1D(filters=32, kernel_size=8, activation='relu'))
+    model.add(embedding_layer)   # 使用自己生成的word embeddings进行训练得到的结果非常差，经常正确率都不到60%。
+    # model.add(Embedding(vocab_size, 100, input_length=max_length))   # 与上面相比，这种简单的layer准确率有接近90%。
+    model.add(Conv1D(filters=128, kernel_size=8, activation='relu'))
     model.add(MaxPooling1D(pool_size=2))
     model.add(Flatten())
-    model.add(Dense(10, activation='relu'))
     model.add(Dense(1, activation='sigmoid'))
     # print(model.summary())
+
     # compile network
     model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
     # fit network
@@ -70,25 +82,64 @@ def train_a_model(Xtrain, ytrain, max_length, vocab_size):
     return model
 
 
-def multi_train_and_test():
-    tokenizer, Xtrain, ytrain, Xtest, ytest, max_length, vocab_size = prepare_sequence()
+def save_word2wec_embedding(filename):
+    # load training data
+    positive_docs = json.load(open('w2v_positive.txt'))
+    negative_docs = json.load(open('w2v_negative.txt'))
+    train_docs = negative_docs + positive_docs
 
-    n_repeats = 8
-    total_acc = 0
-    for i in range(n_repeats):
-        model = train_a_model(Xtrain, ytrain, max_length, vocab_size)
+    # train Word2Vec model
+    model = Word2Vec(train_docs, vector_size=100, window=5, workers=8, min_count=1)
 
-        # evaluate
-        loss, acc = model.evaluate(Xtest, ytest, verbose=0)
-        total_acc += acc
-        print('Test Accuracy of turn %s/%d: %f' % (str(i+1).zfill(2), n_repeats, acc*100))
+    # summarize vocabulary size in model
+    words = list(model.wv.key_to_index)
+    print('Vocabulary size: %d' % len(words))
 
-    print('Average accuracy is: %f' % (total_acc / n_repeats * 100))
+    # save model in ASCII (Word2Vec) format
+    model.wv.save_word2vec_format(filename, binary=False)
 
+
+# load embedding as a dict
+def load_embedding(filename):
+    # load embedding into memory, skip first line
+    file = open(filename,'r')
+    lines = file.readlines()[1:]
+    file.close()
+    # create a map of words to vectors
+    embedding = dict()
+    for line in lines:
+        parts = line.split()
+        # key is string word, value is numpy array for vector
+        embedding[parts[0]] = asarray(parts[1:], dtype='float32')
+    return embedding
+
+
+# create a weight matrix for the Embedding layer from a loaded embedding
+def get_weight_matrix(embedding, vocab):
+    # total vocabulary size plus 0 for unknown words
+    vocab_size = len(vocab) + 1
+    # define weight matrix dimensions with all 0
+    weight_matrix = zeros((vocab_size, 100))
+    # step vocab, store vectors using the Tokenizer's integer mapping
+    for word, i in vocab.items():
+        weight_matrix[i] = embedding.get(word)
+    return weight_matrix
+
+
+embedding_filename = 'embedding_word2vec.txt'
 
 # init_vocab()
 # save_lines_to_file(True)
 # save_lines_to_file(False)
+# ave_clean_lines_to_file(True)    # 生成 word embedding 生成所需要的输入文件
+# save_word2wec_embedding(embedding_filename)
 
-multi_train_and_test()
+
+tokenizer, Xtrain, ytrain, Xtest, ytest, max_length, vocab_size = prepare_sequence()
+model = train_a_model(tokenizer, Xtrain, ytrain, max_length, vocab_size)
+
+# evaluate
+loss, acc = model.evaluate(Xtest, ytest, verbose=0)
+print('Test Accuracy: %f' % (acc*100))
+
 
