@@ -21,10 +21,10 @@ function start_train
             --save_path  ${save_path} \
             --dataset ${dataset} \
             --batch_size 2 \
-            --accumulation_steps 32 \
+            --accumulation_steps 8 \
             --lr 2e-5 \
             --max_datasets_size 128 \
-            --max_epochs 4
+            --max_epochs 1
     fi
 }
 
