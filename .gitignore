@@ -5,7 +5,7 @@ __pycache__/
 pyTorch/data/*
 pyTorch/*.pth
 
-openai/*_online.py
+openai/envvar.py
 
 # C extensions
 *.so

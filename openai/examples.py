@@ -1,10 +1,17 @@
 
+import os
 import openai
-from envvar_online import api_key
+from envvar import api_key
 
 
 # openai.api_key = os.getenv("OPENAI_API_KEY")
 openai.api_key = api_key
+
+
+def list_models():
+    openai.organization = "org-loRuQjfKhAJ6qMTVUKViM89L"
+    # openai.api_key = os.getenv("OPENAI_API_KEY")
+    openai.Model.list()
 
 
 def get_embeddings(doc):
@@ -36,8 +43,6 @@ def get_embeddings(doc):
     )
 
     return response
-
-
 
 
 

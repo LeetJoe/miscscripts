@@ -1,6 +1,6 @@
 
 import openai
-from .envvar_online import api_key
+from .envvar import api_key
 
 '''
 endpoint list: 在 EngineAPIResource 里面有封装
