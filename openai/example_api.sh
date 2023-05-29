@@ -635,6 +635,7 @@ curl https://api.openai.com/v1/models/curie:ft-acmeco-2021-03-03-21-44-20 \
   #}
 
 curl https://api.openai.com/v1/moderations \
+  -X POST \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer $OPENAI_API_KEY" \
   -d '{
