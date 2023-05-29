@@ -53,7 +53,7 @@ resp = get_embeddings('to be or not to be')
 print(resp.data)
 
 
-# example function for exceptions handle
+# example function for handling exceptions for python lib
 def exception_handel():
     try:
       #Make your OpenAI API request here

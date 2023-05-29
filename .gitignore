@@ -6,6 +6,7 @@ pyTorch/data/*
 pyTorch/*.pth
 
 openai/envvar.py
+ding/config.py
 
 # C extensions
 *.so
