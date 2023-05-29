@@ -9,11 +9,10 @@ import urllib
 import urllib3
 import json
 
+from config import appid, secret
 
 file_name = 'accesstoken.tmp'
 expire_time = 7200
-appid='wxc7ffb5814df1ed4a'
-secret='a958bb948105524bdd92fbe3fc98d457'
 
 api_wechat = 'https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=' + appid + '&secret=' + secret
 

@@ -1,9 +1,11 @@
 from elasticsearch import Elasticsearch
 
+from config import es as esconf
+
 # Single node via URL
 es = Elasticsearch(
-    "http://192.168.1.114:9200",
-    basic_auth=("elastic", "8-INTbKDAs8Fsm8dqtBS")
+    esconf.host,
+    basic_auth=(esconf.username, esconf.password)
 )
 
 '''

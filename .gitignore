@@ -5,8 +5,13 @@ __pycache__/
 pyTorch/data/*
 pyTorch/*.pth
 
+colossalChat/test/*
 openai/envvar.py
 ding/config.py
+elasticsearch/config.py
+postgresql/config.py
+utils/config.py
+wechat/config.py
 
 # C extensions
 *.so

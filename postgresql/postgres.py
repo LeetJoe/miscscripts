@@ -3,6 +3,8 @@ import time
 
 from psycopg2 import extras
 
+from config import pg as pgconfig
+
 
 # print data
 def show_data(data, iter):
@@ -16,19 +18,11 @@ def show_data(data, iter):
 
 
 # open db connection
-'''
-db = psycopg2.connect(host = '172.18.34.37',
-                      port = '5003',
-                      user = 'postgres',
-                      password = '',
-                      database = 'sc_owltest')
-'''
-
-db = psycopg2.connect(host='127.0.0.1',
-                      port='5432',
-                      user='neosong',
-                      password='123456',
-                      database='owltest')
+db = psycopg2.connect(host=pgconfig.host,
+                      port=pgconfig.port,
+                      user=pgconfig.user,
+                      password=pgconfig.passwd,
+                      database=pgconfig.db)
 
 # when bulk inserting we should comment this line
 # db.autocommit = True

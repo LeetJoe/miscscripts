@@ -1,9 +1,10 @@
 from elastic_enterprise_search import AppSearch
+from config import appsearch as asconfig
 
 
 app_search = AppSearch(
-    "http://192.168.1.114:3002",
-    http_auth="private-sdsoiv73zemt5c8si35vg2ox"
+    asconfig.host,
+    http_auth=asconfig.token
 )
 
 # get all engines(by page)

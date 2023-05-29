@@ -2,8 +2,9 @@
 
 import urllib3
 
+from config import api as apiconf
 
-api = 'http://172.18.34.41:8070'
+api = apiconf.host
 
 http = urllib3.PoolManager()
 resp = http.request(

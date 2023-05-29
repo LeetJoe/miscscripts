@@ -1,20 +1,14 @@
 import psycopg2
 import time
 
+from config import pg as pgconfig
 
 # open db connection
-'''
-db = psycopg2.connect(host = '172.18.34.37',
-                      port = '5003',
-                      user = 'postgres',
-                      password = '',
-                      database = 'sc_owltest')
-'''
-db = psycopg2.connect(host = '127.0.0.1',
-                      port = '5432',
-                      user = 'neosong',
-                      password = '123456',
-                      database = 'owltest')
+db = psycopg2.connect(host=pgconfig.host,
+                      port=pgconfig.port,
+                      user=pgconfig.user,
+                      password=pgconfig.passwd,
+                      database=pgconfig.db)
 
 db.autocommit = True
 

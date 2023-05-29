@@ -4,13 +4,14 @@ from elasticsearch import Elasticsearch
 import csvmappings
 import csv
 
+from config import es as esconf
 
 # 在
 index_name = 'search-test-csv'
 
 es = Elasticsearch(
-    "http://192.168.1.114:9200",
-    basic_auth=("elastic", "8-INTbKDAs8Fsm8dqtBS")
+    esconf.host,
+    basic_auth=(esconf.username, esconf.password)
 )
 
 filepath = '/mnt/data1/neosong/data/obis/split/split_obis'

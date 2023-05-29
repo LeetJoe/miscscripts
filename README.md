@@ -1,25 +1,24 @@
 ### 一些杂七杂八的代码。
 
+### colossalChat
+
+关于colossalChat训练的一些内容；
 
 ### dataset
 
 关于对ColossalChat中对dataset进行处理，如分割、格式转换等的脚本；
 
-
 ### ding
 
 钉钉报警的脚本，用于监控服务器状态或者进程执行情况；
-
 
 ### elasticsearch
 
 关于elasticsearch的一些脚本，如elasticsearch API操作，app search API操作等；
 
-
 ### NLP
 
 关于NLP的一些实践示例，用于尝试和了解一些基本的概念与用法；
-
 
 ### postgresql
 
@@ -27,11 +26,9 @@
 
 也有一些脚本用于性能测试；
 
-
 ### utils
 
 一些基本的功能脚本，如http_client用于http api请求；
-
 
 ### wechat
 

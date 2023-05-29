@@ -1,6 +1,8 @@
 import appsearchApi
 import psycopg2
 
+from config import pg
+
 engine_name = 'neosong-test-app-search-engine'
 
 
@@ -19,11 +21,11 @@ print(appsearchApi.updateSchema(engine_name, new_schema))
 
 # open db connection
 
-db = psycopg2.connect(host = '127.0.0.1',
-                      port = '5432',
-                      user = 'neosong',
-                      password = '123456',
-                      database = 'owltest')
+db = psycopg2.connect(host = pg.host,
+                      port = pg.port,
+                      user = pg.user,
+                      password = pg.passwd,
+                      database = pg.db)
 
 db.autocommit = True
 
