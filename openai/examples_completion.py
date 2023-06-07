@@ -1,6 +1,6 @@
 
 import openai
-from .envvar import api_key
+from envvar import api_key
 
 '''
 endpoint list: 在 EngineAPIResource 里面有封装
@@ -277,11 +277,23 @@ def extract_keyword():
 
     return response
 
-# Guide the model towards factual answering by showing it how to respond to questions that fall outside its knowledge base. Using a '?' to indicate a response to words and phrases that it doesn't know provides a natural response that seems to work better than more abstract replies.
+# Guide the model towards factual answering by showing it how to respond to questions that fall outside
+# its knowledge base. Using a '?' to indicate a response to words and phrases that it doesn't know provides
+# a natural response that seems to work better than more abstract replies.
 def factual_answer():
     response = openai.Completion.create(
         model="text-davinci-003",
-        prompt="Q: Who is Batman?\nA: Batman is a fictional comic book character.\n\nQ: What is torsalplexity?\nA: ?\n\nQ: What is Devz9?\nA: ?\n\nQ: Who is George Lucas?\nA: George Lucas is American film director and producer famous for creating Star Wars.\n\nQ: What is the capital of California?\nA: Sacramento.\n\nQ: What orbits the Earth?\nA: The Moon.\n\nQ: Who is Fred Rickerson?\nA: ?\n\nQ: What is an atom?\nA: An atom is a tiny particle that makes up everything.\n\nQ: Who is Alvan Muntz?\nA: ?\n\nQ: What is Kozar-09?\nA: ?\n\nQ: How many moons does Mars have?\nA: Two, Phobos and Deimos.\n\nQ: What's a language model?\nA:",
+        prompt="Q: Who is Batman?\nA: Batman is a fictional comic book character.\n\n"
+               "Q: What is torsalplexity?\nA: ?\n\nQ: What is Devz9?\nA: ?\n\n"
+               "Q: Who is George Lucas?\nA: George Lucas is American film director and producer famous for creating Star Wars.\n\n"
+               "Q: What is the capital of California?\nA: Sacramento.\n\n"
+               "Q: What orbits the Earth?\nA: The Moon.\n\n"
+               "Q: Who is Fred Rickerson?\nA: ?\n\n"
+               "Q: What is an atom?\nA: An atom is a tiny particle that makes up everything.\n\n"
+               "Q: Who is Alvan Muntz?\nA: ?\n\n"
+               "Q: What is Kozar-09?\nA: ?\n\n"
+               "Q: How many moons does Mars have?\nA: Two, Phobos and Deimos.\n\n"
+               "Q: What's a XDGET-93773?\nA:",
         temperature=0,
         max_tokens=60,
         top_p=1.0,
@@ -290,6 +302,17 @@ def factual_answer():
     )
 
     return response
+
+# response: A language model is a type of artificial intelligence that uses statistical techniques to
+# predict the probability of a sequence of words.
+
+# A language model is a probabilistic model used to predict the likelihood of a sequence of words.
+# It is used in natural language processing (NLP) to generate text, answer questions, and translate between languages.
+# Language models are trained on large corpora of text and use statistical methods to
+
+# Q: What's a XDGET-93773?\nA: ?
+
+
 
 # Turn a product description into ad copy.
 def ad_from_description():
@@ -723,7 +746,7 @@ def interview_questions():
 
 
 
-response = qa()
+response = factual_answer()
 
 oaobj = response.choices[0]
 
@@ -752,7 +775,8 @@ def batch_test():
         print(story)
 
 
-# mail.com secret key : wWKno-opXpE-dzcNp-EMArH
+
+
 '''
 response:
 
