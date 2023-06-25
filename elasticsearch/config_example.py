@@ -1,19 +1,19 @@
 
 es = {
-    'host' : '',
-    'username': '',
-    'password': ''
+    'host' : 'http://127.0.0.1:9200',
+    'username': 'elastic',
+    'password': '123456'
 }
 
 appsearch = {
-    'host': '',
-    'token': ''
+    'host': 'http://127.0.0.1:3002',
+    'token': 'private-xxxxxx'
 }
 
 pg = {
-    'host': '',
-    'port': 3333,
-    'user': '',
-    'passwd': '',
-    'db': ''
+    'host': '127.0.0.1',
+    'port': 5432,
+    'user': 'postgre',
+    'passwd': '123456',
+    'db': 'dbname'
 }
