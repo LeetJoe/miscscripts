@@ -12,6 +12,7 @@ esearch/config.py
 postgresql/config.py
 utils/config.py
 wechat/config.py
+wechat/accesstoken.tmp
 
 # C extensions
 *.so
