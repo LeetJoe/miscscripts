@@ -8,7 +8,7 @@ pyTorch/*.pth
 colossalChat/test/*
 openai/envvar.py
 ding/config.py
-elasticsearch/config.py
+esearch/config.py
 postgresql/config.py
 utils/config.py
 wechat/config.py
