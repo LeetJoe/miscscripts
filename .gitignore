@@ -13,6 +13,7 @@ postgresql/config.py
 utils/config.py
 wechat/config.py
 wechat/accesstoken.tmp
+esearch/csvmappings.py
 
 # C extensions
 *.so
