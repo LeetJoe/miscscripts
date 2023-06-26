@@ -128,8 +128,40 @@ def search_prompt(prompt):
     return [hit['_source']['from'] + hit['_source']['relation'] + hit['_source']['to'] for hit in resp['hits']['hits']]
 
 
+def search_prompt2(prompt):
+    resp = es.search(
+        index='elasicsearch-kg-test',
+        size=20,
+        query={
+            "function_score": {
+                "query": {
+                    "bool": {
+                        "must": {
+                            "combined_fields": {
+                                "query": prompt,
+                                "fields": ["from", "to"] # relation使用的keyword，无法用，todo 后面改成text吧。
+                            }
+                        }
+                    }
+                },
+                "min_score": 8
+            }
+        },
+        filter_path=[
+            'hits.hits._score',
+            'hits.hits._source.from',
+            'hits.hits._source.relation',
+            'hits.hits._source.to',
+        ]
+    )
 
-print(search_prompt('关于进一步规范裁量权行使的若干意见第三十五条,接负责的主管人员和其他直接, 然后加进去很多无关的内容，这些都是一些废话，用来干扰的，其实没什么用。随便说都行。'))
+    if not 'hits' in resp.keys():
+        return []
+    if not 'hits' in resp['hits'].keys():
+        return []
+    return [hit['_source']['from'] + hit['_source']['relation'] + hit['_source']['to'] for hit in resp['hits']['hits']]
+
+print(search_prompt2('关于进一步规范裁量权行使的若干意见第三十五条,接负责的主管人员和其他直接, 然后加进去很多无关的内容，这些都是一些废话，用来干扰的，其实没什么用。随便说都行。'))
 
 
 
