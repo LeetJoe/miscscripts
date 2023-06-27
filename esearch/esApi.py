@@ -276,7 +276,7 @@ def bulk_index(client, csv_data_path, relation):
             yield doc
 
     f = open(csv_data_path, mode="r")
-    print("Indexing documents...")
+    print("Indexing %s ...", csv_data_path)
     # generate_actions(f)
 
     successes = 0
@@ -296,7 +296,7 @@ def bulk_index(client, csv_data_path, relation):
 # bulk_index(es, '../downloads/edge_chengfa.csv')
 
 edgelist = [
-    # { "relation": "的惩罚范围是", "file": "edge_chengfa.csv" },
+    { "relation": "的惩罚范围是", "file": "edge_chengfa.csv" },
     { "relation": "的出台机关是", "file": "edge_chutai.csv" },
     { "relation": "提到的的规范内容是", "file": "edge_guifan.csv" },
     { "relation": "提到的鼓励内容是", "file": "edge_guli.csv" },
@@ -311,6 +311,7 @@ edgelist = [
     { "relation": "的主题是", "file": "edge_title.csv" },
     { "relation": "的要求对象是", "file": "edge_yaoqiu.csv" },
     { "relation": "的依据是", "file": "edge_yiju.csv" },
+    { "relation": "的触发条件是", "file": "edge_yuanyin.csv" },
     { "relation": "赋予的执行权力是", "file": "edge_zhixing.csv" },
 ]
 
