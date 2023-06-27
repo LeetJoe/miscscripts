@@ -37,7 +37,7 @@ def create_index(client, index_name):
             "mappings": {
                 "properties": {
                     "from": {"type": "text"},
-                    "relation": {"type": "keyword"},
+                    "relation": {"type": "text"},
                     "to": {"type": "text"}
                 }
             },
@@ -79,17 +79,6 @@ def query_simple():
 def search():
     resp = es.search(index='elasicsearch-kg-test', size=2, filter_path=['hits.hits._*'])
     return resp
-
-
-
-# print(es.search(index='elasicsearch-kg-test', size=2, query={'term': {'from': {'value': '中国海域管理法'}}}))
-
-
-
-# print(es.search(index='elasicsearch-kg-test', size=20, query={'match': {'from': {'query': '关于进一步规范裁量权行使的若干意见'}}}, filter_path=['hits.hits._score', 'hits.hits._source.from']))
-
-
-# resp = es.search(index='elasicsearch-kg-test', size=20, query={'match': {'from': {'query': '关于进一步规范裁量权行使的若干意见'}}}, filter_path=['hits.hits._score', 'hits.hits._source.from', 'hits.hits._source.relation', 'hits.hits._source.to'])
 
 
 
@@ -160,9 +149,6 @@ def search_prompt2(prompt):
     if not 'hits' in resp['hits'].keys():
         return []
     return [hit['_source']['from'] + hit['_source']['relation'] + hit['_source']['to'] for hit in resp['hits']['hits']]
-
-print(search_prompt2('关于进一步规范裁量权行使的若干意见第三十五条,接负责的主管人员和其他直接, 然后加进去很多无关的内容，这些都是一些废话，用来干扰的，其实没什么用。随便说都行。'))
-
 
 
 
@@ -277,13 +263,13 @@ def delete_by_id(id):
 import csv
 from elasticsearch.helpers import streaming_bulk
 
-def bulk_index(client, csv_data_path):
+def bulk_index(client, csv_data_path, relation):
     def generate_actions(f):
         reader = csv.DictReader(f)
         for row in reader:
             doc = {
                 "from": row["from"],
-                "relation": '惩罚',
+                "relation": relation,
                 "to": row["to"],
             }
             # print(doc)
@@ -307,4 +293,36 @@ def bulk_index(client, csv_data_path):
     print("Indexed %d/%d documents" % (successes, total_num))
 
 # create_index(es, 'elasicsearch-kg-test')
-# bulk_index(es, '/Users/neosong/Work/code/git/ucasai/miscscripts/downloads/edge_chengfa.csv')
+# bulk_index(es, '../downloads/edge_chengfa.csv')
+
+edgelist = [
+    # { "relation": "的惩罚范围是", "file": "edge_chengfa.csv" },
+    { "relation": "的出台机关是", "file": "edge_chutai.csv" },
+    { "relation": "提到的的规范内容是", "file": "edge_guifan.csv" },
+    { "relation": "提到的鼓励内容是", "file": "edge_guli.csv" },
+    { "relation": "提到的减免内容是", "file": "edge_jianmian.csv" },
+    { "relation": "提到的禁令内容是", "file": "edge_jinzhi.csv" },
+    { "relation": "颁布的目的是", "file": "edge_mudi.csv" },
+    { "relation": "涉及的法律是", "file": "edge_sheji.csv" },
+    { "relation": "的实践范围是", "file": "edge_shijian.csv" },
+    { "relation": "的适用范围是", "file": "edge_shiyong.csv" },
+    { "relation": "的受理流程是", "file": "edge_shouli.csv" },
+    { "relation": "的约束条件是", "file": "edge_tiaojian.csv" },
+    { "relation": "的主题是", "file": "edge_title.csv" },
+    { "relation": "的要求对象是", "file": "edge_yaoqiu.csv" },
+    { "relation": "的依据是", "file": "edge_yiju.csv" },
+    { "relation": "赋予的执行权力是", "file": "edge_zhixing.csv" },
+]
+
+for item in edgelist:
+    bulk_index(es, '../downloads/' + item['file'], item['relation'])
+
+# resp = search_prompt2('关于进一步规范裁量权行使的若干意见第三十五条,接负责的主管人员和其他直接, 然后加进去很多无关的内容，这些都是一些废话，用来干扰的，其实没什么用。随便说都行。')
+# print(resp)
+
+# print(es.search(index='elasicsearch-kg-test', size=2, query={'term': {'from': {'value': '中国海域管理法'}}}))
+
+# print(es.search(index='elasicsearch-kg-test', size=20, query={'match': {'from': {'query': '关于进一步规范裁量权行使的若干意见'}}}, filter_path=['hits.hits._score', 'hits.hits._source.from']))
+
+# resp = es.search(index='elasicsearch-kg-test', size=20, query={'match': {'from': {'query': '关于进一步规范裁量权行使的若干意见'}}}, filter_path=['hits.hits._score', 'hits.hits._source.from', 'hits.hits._source.relation', 'hits.hits._source.to'])
+
