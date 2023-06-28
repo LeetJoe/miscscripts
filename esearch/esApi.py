@@ -29,15 +29,16 @@ def create_index(client, index_name):
     """Creates an index in Elasticsearch if one isn't already there."""
     client.indices.create(
         index=index_name,
-        body={
-            "settings": {"number_of_shards": 1},
-            "mappings": {
-                "properties": {
-                    "from": {"type": "text"},
-                    "relation": {"type": "text"},
-                    "to": {"type": "text"}
-                }
-            },
+        settings={"number_of_shards": 1},
+        mappings={
+            "properties": {
+                "from": {"type": "text"},
+                # "key_from": {"type": "keyword"},
+                "relation": {"type": "text"},
+                # "key_relation": {"type": "keyword"},
+                "to": {"type": "text"},
+                # "key_to": {"type": "keyword"}
+            }
         },
         # ignore is a global param, it means if the response is a 400 or 404 error status.
         ignore=[400,404]

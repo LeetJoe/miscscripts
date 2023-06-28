@@ -96,8 +96,11 @@ def bulk_index(client, index, csv_data_path, relation):
         for row in reader:
             doc = {
                 "from": row["from"],
+                # "key_from": row["from"],
                 "relation": relation,
+                # "key_relation": relation,
                 "to": row["to"],
+                # "key_to": row["to"],
             }
             # print(doc)
             yield doc
