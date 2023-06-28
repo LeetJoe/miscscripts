@@ -3,10 +3,7 @@ from elasticsearch import Elasticsearch
 from config import es as esconf
 
 # Single node via URL
-es = Elasticsearch(
-    esconf['host'],
-    basic_auth=(esconf['username'], esconf['password'])
-)
+es = Elasticsearch(esconf['host']).options(basic_auth=(esconf['username'], esconf['password']))
 
 '''
 # Multiple nodes via URL
@@ -260,63 +257,6 @@ def delete_by_id(id):
     es.delete(index="test-index", id=id)
 
 
-import csv
-from elasticsearch.helpers import streaming_bulk
-
-def bulk_index(client, csv_data_path, relation):
-    def generate_actions(f):
-        reader = csv.DictReader(f)
-        for row in reader:
-            doc = {
-                "from": row["from"],
-                "relation": relation,
-                "to": row["to"],
-            }
-            # print(doc)
-            yield doc
-
-    f = open(csv_data_path, mode="r")
-    print("Indexing %s ...", csv_data_path)
-    # generate_actions(f)
-
-    successes = 0
-    total_num = 0
-
-    for ok, action in streaming_bulk(
-        client=client, index="elasicsearch-kg-test", actions=generate_actions(f),
-    ):
-        print(ok)
-        print(action)
-        successes += ok
-        total_num += 1
-
-    print("Indexed %d/%d documents" % (successes, total_num))
-
-# create_index(es, 'elasicsearch-kg-test')
-# bulk_index(es, '../downloads/edge_chengfa.csv')
-
-edgelist = [
-    { "relation": "的惩罚范围是", "file": "edge_chengfa.csv" },
-    { "relation": "的出台机关是", "file": "edge_chutai.csv" },
-    { "relation": "提到的的规范内容是", "file": "edge_guifan.csv" },
-    { "relation": "提到的鼓励内容是", "file": "edge_guli.csv" },
-    { "relation": "提到的减免内容是", "file": "edge_jianmian.csv" },
-    { "relation": "提到的禁令内容是", "file": "edge_jinzhi.csv" },
-    { "relation": "颁布的目的是", "file": "edge_mudi.csv" },
-    { "relation": "涉及的法律是", "file": "edge_sheji.csv" },
-    { "relation": "的实践范围是", "file": "edge_shijian.csv" },
-    { "relation": "的适用范围是", "file": "edge_shiyong.csv" },
-    { "relation": "的受理流程是", "file": "edge_shouli.csv" },
-    { "relation": "的约束条件是", "file": "edge_tiaojian.csv" },
-    { "relation": "的主题是", "file": "edge_title.csv" },
-    { "relation": "的要求对象是", "file": "edge_yaoqiu.csv" },
-    { "relation": "的依据是", "file": "edge_yiju.csv" },
-    { "relation": "的触发条件是", "file": "edge_yuanyin.csv" },
-    { "relation": "赋予的执行权力是", "file": "edge_zhixing.csv" },
-]
-
-for item in edgelist:
-    bulk_index(es, '../downloads/' + item['file'], item['relation'])
 
 # resp = search_prompt2('关于进一步规范裁量权行使的若干意见第三十五条,接负责的主管人员和其他直接, 然后加进去很多无关的内容，这些都是一些废话，用来干扰的，其实没什么用。随便说都行。')
 # print(resp)

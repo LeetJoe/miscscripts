@@ -11,10 +11,7 @@ def test():
     # 在
     index_name = 'search-test-csv'
 
-    es = Elasticsearch(
-        esconf.host,
-        basic_auth=(esconf.username, esconf.password)
-    )
+    es = Elasticsearch(esconf['host']).options(basic_auth=(esconf['username'], esconf['password']))
 
     filepath = '/mnt/data1/neosong/data/obis/split/split_obis'
 
