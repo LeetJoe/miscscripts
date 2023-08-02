@@ -19,6 +19,7 @@ esearch/csvmappings.py
 *.so
 
 # Distribution / packaging
+.DS_Store
 .Python
 build/
 develop-eggs/
