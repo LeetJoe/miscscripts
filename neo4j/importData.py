@@ -15,12 +15,20 @@ def tx_create_rows(driver, dbname, items):
             session.execute_write(batch_tx, item)
 
 
-# 事务方法
+# 事务方法，适用于数据处理 pipeline 很长的场景使用，使用事务可以确保一大批操作同时提交或同时回滚。
 def batch_tx(tx, node_names, label):
     result = tx.run(f"CREATE (a:{label}) "
                     "SET a.name = $message "
                     "RETURN a.message + ', from node ' + id(a)", message=label)
     return result.single()[0]
+
+
+# 批量操作示例, query 的构建需要与 rows 字典的构建相匹配。即便可以批量执行，rows 也不要太大，1000 或许是个不错的选择
+# todo 尚未实际上机测试
+def batch_query(driver, query, rows):
+    # query = "MERGE (n:Number) SET n.value = row.value"
+    response = driver.execute_query(f"WITH $rows AS batch UNWIND batch AS row {query}", rows=rows)
+    return response
 
 
 # 创建疾病节点
