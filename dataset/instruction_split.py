@@ -19,7 +19,7 @@ def save_file(rank_num, dict_small):
 
 with open("./instinwild_" + lang + ".json", "r") as f:
     load_dict = json.load(f)
-    appendix_lenth = math.ceil(numpy.log10(len(load_dict)/num))
+    appendix_lenth = math.ceil(numpy.log10(len(load_dict) / num))
     rank = 0
     load_dict_small = []
     for item in load_dict:
