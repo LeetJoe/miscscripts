@@ -10,6 +10,7 @@ from scipy.io import loadmat
 train = pd.read_csv('./data/MNIST_train.csv').values
 test = pd.read_csv('./data/MNIST_test.csv').values#train
 
+'''
 pca = PCA(n_components=n)
 print ("PCA begin with n_components: {}".format(n))
 pca.fit(X_train)
@@ -28,3 +29,4 @@ accuracy = clf1.score(X_val_pca， y_val)
 end = time.time()
 print("accuracy: {}, time elaps:{}".format (accuracy,int(end-start)))
 return accuracy
+'''
