@@ -14,6 +14,7 @@
 \usepackage{graphics,graphicx}
 \usepackage{algorithm,algpseudocode}
 \usepackage{amsmath,amssymb,amsfonts}
+\usepackage{bm}
 \usepackage[numbers,sort&compress]{natbib}
 
 \renewcommand{\algorithmicrequire}{\textbf{Input:}}
@@ -24,7 +25,7 @@
 
 \begin{document}
 
-\title{论文题目}
+\title{ELM原理及其在数据预测中的简单应用}
 
 \author{
     \IEEEauthorblockN{
@@ -40,37 +41,139 @@
 \maketitle
 
 \begin{abstract}
-  给出本篇论文简短的摘要。
+在过去的几十年中，人们认为前馈神经网络是因为学习速度不够快而限制了其广泛的应用。这背后主要有两个原因，一是被广泛用于训练神经网络的梯度的学习算法比较慢，二是对神经网络的所有参数进行迭代微调也需要使用基于梯度的学习算法。与传统实现不同，本文针对单隐层前馈神经网络(SLFNs)提出了一种新的学习算法——极限学习机(ELM)，该算法随机选择隐藏节点并解析确定SLFNs的输出权值。理论上，该算法可以在极快的学习速度下提供良好的泛化性能。基于几个人工和真实的基准函数逼近和分类问题(包括非常大的复杂应用)的实验结果表明，新算法在大多数情况下都具有良好的泛化性能，学习速度比传统的流行前馈神经网络学习算法快数千倍。
 \end{abstract}
 
 
-\section*{课程论文要求}
+\section{简介}
 
-论文需与认知计算课程内容相关，可以提出或改进算法，可以使用算法解决专业领域问题，也可以是认知计算或人工智能相关领域文献综述（近三年）。
-
-要求:
+前馈神经网络在许多领域得到了广泛的应用，因为它具有以下能力：
 \begin{enumerate}
-  \item 论文要有实验数据支撑（文献综述可以不包含实验，但是要有充足的文献支撑），需要引用相关的参考文献，参考文献请统一使用本模板包含的 IEEETran 格式；
-  \item 中文或英文撰写，正文不少于 6 页（不含参考文献），课程网站已上传中文 Word 模板、中英文 \LaTeX 模板，任选其一使用；
-  \item 不得抄袭，不得直接翻译已发表文章，不得与往届论文雷同。一旦发现上述任一情形，本门课程不通过。
+	\item 可以从输入样本学习到复杂的非线性映射；
+	\item 在难以用经典参数技术处理的大规模模式识别问题中表现良好。
 \end{enumerate}
 
-注意事项：
+但是，传统的学习算法在训练速度上通常难以令人满意，花费几个小时、几天甚至更多时间来训练一个模型是司空见惯的事情。
+
+从数学的角度来看，前馈神经网络的逼近能力着重看两个方面：致密输入集上的全局逼近和有限训练样本集上的逼近。许多研究者探索了标准多层前馈神经网络的全局逼近能力。Hornik 曾证明，在致密输入集上使用神经网络可以在度量上逼近连续映射，只要激活函数是连续的、有界和非常数的。Leshno改进了Hornik的工作，证明了具有非多项式激活函数的前馈网络可以在度量上逼近连续函数。在实际应用中，神经网络是在有限的训练集上完成训练的，对于此类函数近似，Huang和Babri表明，使用N个隐藏节点和任一种非线性激活函数的单隐层前馈神经网络(SLFN)可以准确地学习N个不同的观测。在之前的理论研究工作以及几乎所有的前馈神经网络学习算法中，输入权值隐藏层偏置都是需要在训练中进行更新的。
+
+传统上，前馈网络的所有参数都需要微调，因此不同层的参数(权重和偏置)之间存在依赖关系，在过去的几十年中，此类学习算法几乎都基于梯度下降方法，但是这类学习方法经常因为学习步骤设置得不合适而速度很慢，而且很容易收敛到局部最小值。为了获得更好的学习效果，这种学习算法通常需要许多迭代学习步骤。然而通过我们对人工和真实大型应用的一些模拟结果发现，输入权重和第一隐藏层偏置的更新并不是必要的，省去这些步骤不仅学习速度极快，泛化性能也很好。
+
+在本文中，我们首先严格证明，只要隐藏层的激活函数是无限可微的，那么单隐层前馈神经网络的输入权重和隐藏层偏置可以随机分配，不必微调。然后单隐层前馈神经网络可以简单地被视为线性系统，其连接隐藏层和输出层的输出权重可以通过隐藏层输出矩阵的简单广义逆运算来分析确定。基于这一点，本文提出了名为“极端学习机（ELM）”的简单学习算法，其学习速度比传统的反向传播（BP）等前馈网络学习算法快数千倍，同时还能获得更好的泛化能力。Bartlett的关于前馈神经网络泛化能力的理论曾提到，最小化训练误差时，得到的权重范数越小，模型的泛化能力通常也更强。ELM算法就倾向于达到最小的训练误差、最小的权重范数，这正是其泛化能力取得良好表现的原因。因为这些不同于传统单隐层前馈神经网络的特点，我们为这种算法起名“极端学习机”。
+
+本文的组织结构如下：第2部分严格证明，如果隐藏层的激活函数是无限可微的，则单隐层前馈神经网络（SLFNs）的输入权重和隐藏层偏置可以随机分配。第3部分详细描述使用单隐藏层前馈神经网络（SLFNs）的ELM学习算法。第4部分中给出性能评估。第5部分中给出一些讨论和结论。在算法中起着重要作用的Moore-Penrose广义逆变换和通用线性系统的最小化最小二乘解范数等内容，将在附录中简要介绍。
+
+
+\section{使用随机隐节点的单隐层前馈网络}
+
+对于 $N$ 个完全不同的样本 $({\bf x}_i, {\bf t})i$，其中 ${\bf x}_i=[x_{i1},x_{i2},\dots,x_{in}]^T\in{\bf R}^n, {\bf t}_i=[t_{i1},t_{i2},\dots,t_{im}]^T\in{\bf R}^m$，拥有 $\tilde N$ 个隐节点的 SLFNs 并使用激活函数 g(x) 的模型可表达为如下形式：
+\begin{align}\label{eq1}
+	\overset{\tilde{N}}{\underset{i=1}{\sum}}{{\bm{\beta}}_i}{g_i}({\bf{x}}_j)&=\overset{\tilde{N}}{\underset{i=1}{\sum}}{{\bm{\beta}}_i}g({{\bf{w}}_i}\cdot{{\bf{x}}_j}+b_i)={\bf{o}}_j\notag\\
+	&\quad j=1,\dots,N
+\end{align}
+其中 $ {\bf{w}}_i=[w_{i1},w_{i2},\dots,w_{in}]^T $ 是连接第 $i$ 个隐节点与输入节点的权重向量，$ {\bm{\beta}}_i=[\beta_{i1},\beta_{i2},\dots,\beta_{im}]^T $ 是连接第 $i$ 个隐节点与输出节点的权重向量；$b_i$是第$i$个隐节点的阈值。${{\bf{w}}_i}\cdot{{\bf{x}}_j}$表示${{\bf{w}}_i}$和${{\bf{x}}_j}$的内积。
+
+拥有 $\tilde N$ 个隐节点的 SLFNs 并使用激活函数 g(x) 的模型可以零误差逼近这 $N$ 个样本意味着 $\sum^{\tilde{N}}_{j=1}||{\bf{o}}_j-{\bf{t}}_j||=0$，举例来说，存在 $ {\bm{\beta}}_i$、${{\bf{w}}_i}$和$b_i$，使得
+\begin{align}\label{eq2}
+	\overset{\tilde{N}}{\underset{i=1}{\sum}}{{\bm{\beta}}_i}g({{\bf{w}}_i}\cdot{{\bf{x}}_j}+b_i)={\bf{t}}_j,\hspace{2em}j=1,\dots,N.
+\end{align}
+这$N$个等式可以写成
+
+\begin{align}\label{eq3}
+	{\bf{H}}\cdot{\bm{\beta}}={\bf{T}}
+\end{align}
+
+其中
+
+\begin{align}\label{eq4}
+	& {\bf{H}}({\bf{w}}_1,\dots,{\bf{w}}_{\tilde{N}},b_1,\dots,b_{\tilde{N}},{\bf{x}}_1,\dots,{\bf{x}}_{\tilde{N}}) \notag\\
+	= & \begin{bmatrix}
+		g({{\bf{w}}_1}\cdot{{\bf{x}}_1}+b_1) & \dots & g({{\bf{w}}_{\tilde{N}}}\cdot{{\bf{x}}_1}+b_{\tilde{N}}) \\
+		\vdots & \dots & \vdots \\
+		g({{\bf{w}}_1}\cdot{{\bf{x}}_N}+b_1) & \dots & g({{\bf{w}}_{\tilde{N}}}\cdot{{\bf{x}}_N}+b_{\tilde{N}})
+	\end{bmatrix}_{N\times{\tilde{N}}}
+	\end{align}
+
+\begin{align}\label{eq5}
+	{\bm{\beta}}=
+	\begin{bmatrix}
+		{\bm{\beta}}_1^T\\
+		\vdots \\
+		{\bm{\beta}}_{\tilde{N}}^T
+	\end{bmatrix}_{\tilde{N}\times m},
+	{\bf{T}}=\begin{bmatrix}
+		{\bf{t}}_1^T\\
+		\vdots\\
+		{\bf{t}}_{\tilde{N}}^T
+	\end{bmatrix}_{N\times m}
+\end{align}
+
+这里 ${\bf{H}}$ 称为隐层输出矩阵，它的第$i$列是与输入${\bf x}_1,{\bf x}_2,\dots,{\bf x}_N$相对应的第$i$个隐节点的输出。
+如果激活函数$g$是无限可微的，那么可以证明需要的节点数量$\tilde{N}\le N$。更严格的表述如下：
+
+\textbf{定理2.1}\textit{给定一个具有$N$个隐节点的标准 SLFN 以及一个在任何区间都无限可微的激活函数 $g: R\rightarrow R$，对 $N$ 个完全不同的样本 $({\bf x}_i,{\bf t}_i )$，其中 ${\bf x}_i\in R^n$ 且 ${\bf t}_i\in R^m$，对分别在 $R^n$ 和 $R$ 任意区间上随机取得的${\bf w}_i$和$b_i$，不论其处于何种连续概率分布，都一定有 ${\bf H}$ 可逆且${||\bf{H}}\cdot{\bm{\beta}}-{\bf{T}}||=0$ 。}
+
+\textbf{证明}\ 考虑一个向量 ${\bf c}(b_i)=[g({\bf x}_1),g({\bf x}_N)]^T=[g({\bf w}_i\cdot{\bf x}_1+b_i),g({\bf w}_i\cdot{\bf x}_N+b_i)]^T$，它表示在欧氏空间 $R^N$中 ${\bf H}$ 的第$i$列，而 $b_i\in(a,b)$ 且 $(a,b)$ 可以是 ${\bf R}$ 上的任意区间。基于前人的工作，我们可以用反证法证明 ${\bf c}$ 不属于维度小于 $N$ 的任意子空间。
+
+又 ${\bf w}_i$ 随机生成于一个连续概率分布，可以假设对任意$k\ne k'$，${\bf w}_i\cdot {\bf x}_k \ne {\bf w}_i\cdot {\bf x}_k'$。如果 ${\bf c}$ 属于一个维度为 $N-1$ 的子空间，那么必定存在一个向量 ${\bm \alpha}$ 与这个子空间正交
+
+\begin{align}\label{eq6}
+	&({\bm \alpha},{\bf c}(b_i)-{\bf c}(a))\notag\\
+	=&{\alpha}_1\cdot g(b_i+d_1)+{\alpha}_2\cdot g(b_i+d_2)\notag\\
+	&+\dots+{\alpha}_N\cdot g(b_i+d_N)-z\notag\\
+	=&0
+\end{align}
+
+此处 $d_k={\bf w}_i\cdot{\bf x}_k$，$k=1,\dots,N$ 以及 $z={\bm \alpha}\cdot{\bf c}(a), \forall b_i\in(a,b)$。假设 $\alpha_N\ne0$，此等式可进一步写为
+
+\begin{align}\label{eq7}
+	g(b_i+d_N)=-\overset{N-1} {\underset {p=1}\sum}\gamma^p g(b_i+d_p)+z/\alpha_N
+\end{align}
+
+此处有$\gamma_p=\alpha_p/\alpha_N, p=1,2,\dots,N-1$。又$g(x)$在任意区间上无限可微，可得
+
+\begin{align}\label{eq8}
+	g^{(l)}(b_i+d_N)=-\overset{N-1} {\underset {p=1}\sum}\gamma^{(l)} g(b_i+d_p)\notag\\
+	l=1,2,\dots,N,N+1,\dots
+\end{align}
+
+$g^{(l)}$表示函数$g$关于$b_i$的第$l$阶微分。然而，对于生成的多于 $N-1$ 个的线性等式，仅有 $N-1$ 个自由系数 $\gamma_1,\gamma_2,\dots,\gamma_{N-1}$，这是不成立的。这样我们就证明了，向量${\bf c}$不属于任意一个维度少于 $N$ 的子空间。
+
+由此可得，从任意区间$(a,b)$为$N$个隐节点随机取$N$个偏置值$b_1,\dots,\b_N$，有可能使得相应的向量组${\bf c}(b_1),{\bf c}(b_2),\dots,{\bf c}(b_N)$能够生成$R^N$。也就是说，在 $R^n$ 和 $R$ 任意区间上、按照任何一种连续概率分布，随机取得权重向量${\bf w}_i$和偏置值$b_i$，必然可使${\bf H}$的列向量满秩。$\square$
+
+
+
+\section*{Requirements for the Paper}
+
+The thesis needs to be related to the content of the Cognitive Computing course. You may propose new algorithms, refine existing ones, or apply existing algorithms to your field of study. The paper can also be a literature review in cognitive computing or AI-related fields (from the recent three years).
+
+Requirements:
 \begin{enumerate}
-  \item 介绍一个工作前，最好花一定篇幅讲清楚问题定义；
-  \item 自己提出的方法或调研文献中的方法，除描述方法和实验结果外，可以着重分析方法的优缺点（按照自己的理解），并针对缺点尝试给出可能的改进方案；
-  \item 仔细检查交叉引用是否全部编译成功，行文中避免出现 ``?''，尽量减少错别字和语法错误；
-  \item 参考文献中必不可少的部分：作者、题目、发表期刊或会议、发表时间。
+	\item The paper must be supported by experiments (a literature review doesn't need to include experiments, but there must be sufficient literature support), and relevant references need to be cited. For references, please use the IEEETran template included in this template.
+	\item You may write in Chinese or English, with at least 6 pages (excluding references) of content. Chinese Word template and \LaTeX templates in both Chinese and English have been uploaded onto the course website. You may choose to use any one of them.
+	\item No plagiarism of previous papers on this course or published articles nor direct translation of such articles is allowed. You will fail this course if caught doing any of the misbehaviors above.
 \end{enumerate}
 
-加分项：
+Note:
 \begin{enumerate}
-  \item 提出的算法有创新性；
-  \item 解决的问题有实际或科研价值；
-  \item 文献综述追踪前沿进展，分析总结独到全面。
+	\item Before introducing others' work, make sure to spend a certain amount of space to clarify the problem definition.
+	\item For the methods proposed by yourself or the methods mentioned in the literature review, in addition to describing the method and experimental results, you can focus on analyzing the advantages and disadvantages of the method (according to your own understanding), and try to give thoughts on possible improvements.
+	\item Please check carefully whether all cross-references are compiled successfully. Avoid ``?'' appearing in the text, and also minimize typos and grammatical errors.
+	\item The necessary part of the references: author, title, publication journal or conference, publication time.
 \end{enumerate}
 
-以下章节仅供参考，可根据内容调整。
+Extra points for:
+\begin{enumerate}
+	\item Innovative new algorithms,
+	\item solutions to problems that have practical/scientific values, and
+	\item comprehensive and insightful surveys that track state-of-the-art progress.
+\end{enumerate}
+
+
+
+
+
+
 
 \section{引言}
 
@@ -96,3 +199,17 @@
 \bibliographystyle{IEEETran}
 
 \end{document}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
