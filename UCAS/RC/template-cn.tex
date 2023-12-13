@@ -67,34 +67,36 @@
 \section{使用随机隐节点的单隐层前馈网络}
 
 对于 $N$ 个完全不同的样本 $({\bf x}_i, {\bf t})i$，其中 ${\bf x}_i=[x_{i1},x_{i2},\dots,x_{in}]^T\in{\bf R}^n, {\bf t}_i=[t_{i1},t_{i2},\dots,t_{im}]^T\in{\bf R}^m$，拥有 $\tilde N$ 个隐节点的 SLFNs 并使用激活函数 g(x) 的模型可表达为如下形式：
-\begin{align}\label{eq1}
-	\overset{\tilde{N}}{\underset{i=1}{\sum}}{{\bm{\beta}}_i}{g_i}({\bf{x}}_j)&=\overset{\tilde{N}}{\underset{i=1}{\sum}}{{\bm{\beta}}_i}g({{\bf{w}}_i}\cdot{{\bf{x}}_j}+b_i)={\bf{o}}_j\notag\\
-	&\quad j=1,\dots,N
-\end{align}
+\begin{equation}\label{eq1}
+	\begin{split}
+		\overset{\tilde{N}}{\underset{i=1}{\sum}}{{\bm{\beta}}_i}{g_i}({\bf{x}}_j)&=\overset{\tilde{N}}{\underset{i=1}{\sum}}{{\bm{\beta}}_i}g({{\bf{w}}_i}\cdot{{\bf{x}}_j}+b_i)={\bf{o}}_j\\
+		&\quad j=1,\dots,N
+	\end{split}
+\end{equation}
 其中 $ {\bf{w}}_i=[w_{i1},w_{i2},\dots,w_{in}]^T $ 是连接第 $i$ 个隐节点与输入节点的权重向量，$ {\bm{\beta}}_i=[\beta_{i1},\beta_{i2},\dots,\beta_{im}]^T $ 是连接第 $i$ 个隐节点与输出节点的权重向量；$b_i$是第$i$个隐节点的阈值。${{\bf{w}}_i}\cdot{{\bf{x}}_j}$表示${{\bf{w}}_i}$和${{\bf{x}}_j}$的内积。
 
 拥有 $\tilde N$ 个隐节点的 SLFNs 并使用激活函数 g(x) 的模型可以零误差逼近这 $N$ 个样本意味着 $\sum^{\tilde{N}}_{j=1}||{\bf{o}}_j-{\bf{t}}_j||=0$，举例来说，存在 $ {\bm{\beta}}_i$、${{\bf{w}}_i}$和$b_i$，使得
-\begin{align}\label{eq2}
+\begin{equation}\label{eq2}
 	\overset{\tilde{N}}{\underset{i=1}{\sum}}{{\bm{\beta}}_i}g({{\bf{w}}_i}\cdot{{\bf{x}}_j}+b_i)={\bf{t}}_j,\hspace{2em}j=1,\dots,N.
-\end{align}
+\end{equation}
 这$N$个等式可以写成
 
-\begin{align}\label{eq3}
+\begin{equation}\label{eq3}
 	{\bf{H}}\cdot{\bm{\beta}}={\bf{T}}
-\end{align}
+\end{equation}
 
 其中
-
-\begin{align}\label{eq4}
-	& {\bf{H}}({\bf{w}}_1,\dots,{\bf{w}}_{\tilde{N}},b_1,\dots,b_{\tilde{N}},{\bf{x}}_1,\dots,{\bf{x}}_{\tilde{N}}) \notag\\
-	= & \begin{bmatrix}
-		g({{\bf{w}}_1}\cdot{{\bf{x}}_1}+b_1) & \dots & g({{\bf{w}}_{\tilde{N}}}\cdot{{\bf{x}}_1}+b_{\tilde{N}}) \\
-		\vdots & \dots & \vdots \\
-		g({{\bf{w}}_1}\cdot{{\bf{x}}_N}+b_1) & \dots & g({{\bf{w}}_{\tilde{N}}}\cdot{{\bf{x}}_N}+b_{\tilde{N}})
-	\end{bmatrix}_{N\times{\tilde{N}}}
-	\end{align}
-
-\begin{align}\label{eq5}
+\begin{equation}
+	\begin{split}\label{eq4}
+		& {\bf{H}}({\bf{w}}_1,\dots,{\bf{w}}_{\tilde{N}},b_1,\dots,b_{\tilde{N}},{\bf{x}}_1,\dots,{\bf{x}}_{\tilde{N}})\\
+		= & \begin{bmatrix}
+			g({{\bf{w}}_1}\cdot{{\bf{x}}_1}+b_1) & \dots & g({{\bf{w}}_{\tilde{N}}}\cdot{{\bf{x}}_1}+b_{\tilde{N}}) \\
+			\vdots & \dots & \vdots \\
+			g({{\bf{w}}_1}\cdot{{\bf{x}}_N}+b_1) & \dots & g({{\bf{w}}_{\tilde{N}}}\cdot{{\bf{x}}_N}+b_{\tilde{N}})
+		\end{bmatrix}_{N\times{\tilde{N}}}
+	\end{split}
+\end{equation}
+\begin{equation}\label{eq5}
 	{\bm{\beta}}=
 	\begin{bmatrix}
 		{\bm{\beta}}_1^T\\
@@ -106,40 +108,89 @@
 		\vdots\\
 		{\bf{t}}_{\tilde{N}}^T
 	\end{bmatrix}_{N\times m}
-\end{align}
-
+\end{equation}
 这里 ${\bf{H}}$ 称为隐层输出矩阵，它的第$i$列是与输入${\bf x}_1,{\bf x}_2,\dots,{\bf x}_N$相对应的第$i$个隐节点的输出。
 如果激活函数$g$是无限可微的，那么可以证明需要的节点数量$\tilde{N}\le N$。更严格的表述如下：
 
-\textbf{定理2.1}\textit{给定一个具有$N$个隐节点的标准 SLFN 以及一个在任何区间都无限可微的激活函数 $g: R\rightarrow R$，对 $N$ 个完全不同的样本 $({\bf x}_i,{\bf t}_i )$，其中 ${\bf x}_i\in R^n$ 且 ${\bf t}_i\in R^m$，对分别在 $R^n$ 和 $R$ 任意区间上随机取得的${\bf w}_i$和$b_i$，不论其处于何种连续概率分布，都一定有 ${\bf H}$ 可逆且${||\bf{H}}\cdot{\bm{\beta}}-{\bf{T}}||=0$ 。}
+\textbf{定理2.1}\textit{给定一个具有$N$个隐节点的标准 SLFN 以及一个在任何区间都无限可微的激活函数 $g: R\rightarrow R$，对 $N$ 个完全不同的样本 $({\bf x}_i,{\bf t}_i )$，其中 ${\bf x}_i\in R^n$ 且 ${\bf t}_i\in R^m$，对分别在 $R^n$ 和 $R$ 任意区间上随机取得的${\bf w}_i$和$b_i$，不论依何种连续概率分布，都一定有 ${\bf H}$ 可逆且${||\bf{H}}\cdot{\bm{\beta}}-{\bf{T}}||=0$ 。}
 
 \textbf{证明}\ 考虑一个向量 ${\bf c}(b_i)=[g({\bf x}_1),g({\bf x}_N)]^T=[g({\bf w}_i\cdot{\bf x}_1+b_i),g({\bf w}_i\cdot{\bf x}_N+b_i)]^T$，它表示在欧氏空间 $R^N$中 ${\bf H}$ 的第$i$列，而 $b_i\in(a,b)$ 且 $(a,b)$ 可以是 ${\bf R}$ 上的任意区间。基于前人的工作，我们可以用反证法证明 ${\bf c}$ 不属于维度小于 $N$ 的任意子空间。
 
 又 ${\bf w}_i$ 随机生成于一个连续概率分布，可以假设对任意$k\ne k'$，${\bf w}_i\cdot {\bf x}_k \ne {\bf w}_i\cdot {\bf x}_k'$。如果 ${\bf c}$ 属于一个维度为 $N-1$ 的子空间，那么必定存在一个向量 ${\bm \alpha}$ 与这个子空间正交
-
-\begin{align}\label{eq6}
-	&({\bm \alpha},{\bf c}(b_i)-{\bf c}(a))\notag\\
-	=&{\alpha}_1\cdot g(b_i+d_1)+{\alpha}_2\cdot g(b_i+d_2)\notag\\
-	&+\dots+{\alpha}_N\cdot g(b_i+d_N)-z\notag\\
-	=&0
-\end{align}
-
+\begin{equation}\label{eq6}
+	\begin{split}
+		&({\bm \alpha},{\bf c}(b_i)-{\bf c}(a))\\
+		=&{\alpha}_1\cdot g(b_i+d_1)+{\alpha}_2\cdot g(b_i+d_2)\\
+		&+\dots+{\alpha}_N\cdot g(b_i+d_N)-z\\
+		=&0
+	\end{split}
+\end{equation}
 此处 $d_k={\bf w}_i\cdot{\bf x}_k$，$k=1,\dots,N$ 以及 $z={\bm \alpha}\cdot{\bf c}(a), \forall b_i\in(a,b)$。假设 $\alpha_N\ne0$，此等式可进一步写为
-
-\begin{align}\label{eq7}
+\begin{equation}\label{eq7}
 	g(b_i+d_N)=-\overset{N-1} {\underset {p=1}\sum}\gamma^p g(b_i+d_p)+z/\alpha_N
-\end{align}
-
+\end{equation}
 此处有$\gamma_p=\alpha_p/\alpha_N, p=1,2,\dots,N-1$。又$g(x)$在任意区间上无限可微，可得
-
-\begin{align}\label{eq8}
-	g^{(l)}(b_i+d_N)=-\overset{N-1} {\underset {p=1}\sum}\gamma^{(l)} g(b_i+d_p)\notag\\
-	l=1,2,\dots,N,N+1,\dots
-\end{align}
-
+\begin{equation}\label{eq8}
+	\begin{split}
+		g^{(l)}(b_i+d_N)=-\overset{N-1} {\underset {p=1}\sum}\gamma^{(l)} g(b_i+d_p)\\
+		l=1,2,\dots,N,N+1,\dots
+	\end{split}
+\end{equation}
 $g^{(l)}$表示函数$g$关于$b_i$的第$l$阶微分。然而，对于生成的多于 $N-1$ 个的线性等式，仅有 $N-1$ 个自由系数 $\gamma_1,\gamma_2,\dots,\gamma_{N-1}$，这是不成立的。这样我们就证明了，向量${\bf c}$不属于任意一个维度少于 $N$ 的子空间。
 
 由此可得，从任意区间$(a,b)$为$N$个隐节点随机取$N$个偏置值$b_1,\dots,\b_N$，有可能使得相应的向量组${\bf c}(b_1),{\bf c}(b_2),\dots,{\bf c}(b_N)$能够生成$R^N$。也就是说，在 $R^n$ 和 $R$ 任意区间上、按照任何一种连续概率分布，随机取得权重向量${\bf w}_i$和偏置值$b_i$，必然可使${\bf H}$的列向量满秩。$\square$
+
+进一步的，我们有
+
+\textbf{定理2.2}\textit{
+	给定一个任意小的正数$\varepsilon>0$以及一个在任意定义区间上无限可微的激活函数$g: R\rightarrow R$，存在${\tilde{N}\le N}$，使得对 $N$ 个完全不同的样本 $({\bf x}_i,{\bf t}_i )$，其中 ${\bf x}_i\in R^n$ 且 ${\bf t}_i\in R^m$，对分别在 $R^n$ 和 $R$ 任意区间上随机取得的${\bf w}_i$和$b_i$，不论依何种连续概率分布，都一定有$||{\bf H}_{N\times \tilde{N}}\beta_{\tilde{N}\times m}-{\bf T}_{N\times m}||<\varepsilon$。
+}
+
+\textbf{证明}\ 可以使用反证法，若此定理不成立，根据定理2.1，我们可以直接令${\tilde{N}=N}$，使得$||{\bf H}_{N\times \tilde{N}}\beta_{\tilde{N}\times m}-{\bf T}_{N\times m}||<\varepsilon$。\square
+
+
+\section{极限学习机ELM}
+
+基于定理2.1和2.2，我们提出一种极其简单且高效的方法来训练单隐层前馈神经网络（SLFNs）。
+
+\subsection{传统基于梯度的SLFNs}
+
+按照传统方法，要训练一个 SLFN，需要找到特定的$\hat{\bf{w}}_i,\hat b_i,\hat{\bm{\beta}}(i=1,\dots,\tilde{N})$，使得
+\begin{equation}\label{eq9}
+	\begin{split}
+		&||{\bf{H}}(\hat{\bf{w}}_1,\dots,\hat{\bf{w}}_{\tilde{N}},\hat b_1,\dots,\hat b_{\tilde{N}})\hat{\bm{\beta}}-{\bf{T}}||\\
+		=&\underset{{\bf{w}}_i,b_i,{\bm \beta}}{min}||{\bf{H}}({\bf{w}}_1,\dots,{\bf{w}}_{\tilde{N}},b_1,\dots,b_{\tilde{N}}){\bm{\beta}}-{\bf{T}}||
+	\end{split}
+\end{equation}
+求解此式等价于最小化如下代价函数
+\begin{equation}\label{eq10}
+	E=\sum_{j=1}^N(\sum_{i=1}^{\tilde{N}}\beta_i g({\bf{w}}_i\cdot{\bf{x}}_j+b_i)-t_j)^2
+\end{equation}
+
+当${\bf H}$未知时，对${\bf{H}}\cdot{\bm{\beta}}-{\bf{T}}$的最小值的搜索通常使用的是基于梯度的学习算法，在使用此类算法求最小值的过程中，由权重$({\bf w}_i, {\bm \beta}_i)$和偏置参数$(b_i)$组成的向量${\bf W}$由下式迭代更新
+\begin{equation}\label{eq11}
+	{\bf{W}}_k={\bf{W}}_{k-1}-\eta \frac{\partial E({\bf{W}})}{\partial {\bf{W}}}
+\end{equation}
+其中$\eta$表示学习率。在前馈神经网络中BP算法用得最多，它可以通过从输出到输入的传播来高效地计算梯度，但是它有几个问题：
+\begin{enumerate}
+	\item 当学习率$\eta$过小，学习算法收敛过慢。但是当$\eta$过大时，算法会变得不稳定并且发散；
+	\item 误差曲面影响BP学习算法性能的另一个特性是局部最小值的存在。如果学习算法停在一个位于全局最小值之上的局部最小值处，这是不可取的；
+	\item 使用BP算法训练神经网络可能会过训练，导致泛化性能变差。因此，在代价函数最小化过程中需要验证和适当的停止方法；
+	\item 基于梯度的学习在大多数应用中非常耗时。
+\end{enumerate}
+
+而本文的目的就在于解决上述问题，并针对前馈神经网络提出一种新而且有效的学习算法。
+
+\subsection{用于SLFN的最小化范数最小二乘法}
+
+基于前面的定理2.1和2.2，如果激活函数是无限可微的，则输入权重和隐藏层偏置可以随机分配。
+与传统方法中“SLFN的所有参数都需要调整”这点认识不同，我们认为输入权重${\bf w}_i$和隐藏层偏置$b_i$并不一定需要调整，在训练开始时为这些参数随机赋值之后，隐藏层输出矩阵${\bf H}$可以一直保持不变。我们让输入权重 ${\bf w}_i$ 和隐层偏置$b_i$保持不变，根据公式\eqref{eq9}，训练一个SLFN可以简化为求线性方程${\bf{H}}\cdot{\bm{\beta}}={\bf{T}}$的最小二乘解$\hat{\bm{\beta}}$：
+\begin{equation}\label{eq12}
+	\begin{split}
+		&||{\bf{H}}({\bf{w}}_1,\dots,{\bf{w}}_{\tilde{N}},b_1,\dots,b_{\tilde{N}})\hat{\bm{\beta}}-{\bf{T}}||\\
+		=&\underset{\bm \beta}{min}||{\bf{H}}({\bf{w}}_1,\dots,{\bf{w}}_{\tilde{N}},b_1,\dots,b_{\tilde{N}}){\bm \beta}-{\bf{T}}||
+	\end{split}
+\end{equation}
 
 
 
