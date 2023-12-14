@@ -7,6 +7,7 @@
 \usepackage{epsfig}
 \usepackage{xcolor}
 \usepackage{booktabs}
+\usepackage{array}
 \usepackage{multirow}
 \usepackage{textcomp}
 \usepackage{tabularx}
@@ -15,7 +16,18 @@
 \usepackage{algorithm,algpseudocode}
 \usepackage{amsmath,amssymb,amsfonts}
 \usepackage{bm}
+\usepackage{cases}
 \usepackage[numbers,sort&compress]{natbib}
+\usepackage{amsmath,empheq,eqparbox}
+
+\newcommand{\eqmath}[3][c]{%
+	% #1 = alignment, default c, #2 = label, #2 = math material
+	\eqmakebox[#2][#1]{$\displaystyle#3$}%
+}
+\newcommand{\eqtext}[3][c]{%
+	% #1 = alignment, default c, #2 = label, #2 = text material
+	\eqmakebox[#2][#1]{#3}%
+}
 
 \renewcommand{\algorithmicrequire}{\textbf{Input:}}
 \renewcommand{\algorithmicensure}{\textbf{Output:}}
@@ -41,7 +53,9 @@
 \maketitle
 
 \begin{abstract}
-在过去的几十年中，人们认为前馈神经网络是因为学习速度不够快而限制了其广泛的应用。这背后主要有两个原因，一是被广泛用于训练神经网络的梯度的学习算法比较慢，二是对神经网络的所有参数进行迭代微调也需要使用基于梯度的学习算法。与传统实现不同，本文针对单隐层前馈神经网络(SLFNs)提出了一种新的学习算法——极限学习机(ELM)，该算法随机选择隐藏节点并解析确定SLFNs的输出权值。理论上，该算法可以在极快的学习速度下提供良好的泛化性能。基于几个人工和真实的基准函数逼近和分类问题(包括非常大的复杂应用)的实验结果表明，新算法在大多数情况下都具有良好的泛化性能，学习速度比传统的流行前馈神经网络学习算法快数千倍。
+	本文通过论文\textit{Extreme Learning Machine: Theory and Applications}\cite{elm:huang}及相关代码的研读，学习并描述了ELM算法的理论依据、实现方法以及各方面的性能表现，然后将其应用在\textit{datafountain.cn}中举办的“返乡人群发展预测”的数据分析与建模比赛中，赛题基于中国联通的大数据能力，通过使用对联通的信令数据、通话数据、互联网行为等数据进行建模，对个人是否会返乡工作进行判断。在此问题中，我们简单应用了ELM算法，取得好优良的效果，且具有进一步提升的空间。
+	
+	在过去的几十年中，人们认为前馈神经网络是因为学习速度不够快而限制了其广泛的应用。这背后主要有两个原因，一是被广泛用于训练神经网络的梯度的学习算法比较慢，二是对神经网络的所有参数进行迭代微调也需要使用基于梯度的学习算法。与传统实现不同，本文针对单隐层前馈神经网络(SLFNs)提出了一种新的学习算法——极限学习机(ELM)，该算法随机选择隐藏节点并解析确定SLFNs的输出权值。理论上，该算法可以在极快的学习速度下提供良好的泛化性能。基于几个人工和真实的基准函数逼近和分类问题(包括非常大的复杂应用)的实验结果表明，新算法在大多数情况下都具有良好的泛化性能，学习速度比传统的流行前馈神经网络学习算法快数千倍。
 \end{abstract}
 
 
@@ -61,7 +75,7 @@
 
 在本文中，我们首先严格证明，只要隐藏层的激活函数是无限可微的，那么单隐层前馈神经网络的输入权重和隐藏层偏置可以随机分配，不必微调。然后单隐层前馈神经网络可以简单地被视为线性系统，其连接隐藏层和输出层的输出权重可以通过隐藏层输出矩阵的简单广义逆运算来分析确定。基于这一点，本文提出了名为“极端学习机（ELM）”的简单学习算法，其学习速度比传统的反向传播（BP）等前馈网络学习算法快数千倍，同时还能获得更好的泛化能力。Bartlett的关于前馈神经网络泛化能力的理论曾提到，最小化训练误差时，得到的权重范数越小，模型的泛化能力通常也更强。ELM算法就倾向于达到最小的训练误差、最小的权重范数，这正是其泛化能力取得良好表现的原因。因为这些不同于传统单隐层前馈神经网络的特点，我们为这种算法起名“极端学习机”。
 
-本文的组织结构如下：第2部分严格证明，如果隐藏层的激活函数是无限可微的，则单隐层前馈神经网络（SLFNs）的输入权重和隐藏层偏置可以随机分配。第3部分详细描述使用单隐藏层前馈神经网络（SLFNs）的ELM学习算法。第4部分中给出性能评估。第5部分中给出一些讨论和结论。在算法中起着重要作用的Moore-Penrose广义逆变换和通用线性系统的最小化最小二乘解范数等内容，将在附录中简要介绍。
+本文的组织结构如下：第2部分严格证明，如果隐藏层的激活函数是无限可微的，则单隐层前馈神经网络（SLFNs）的输入权重和隐藏层偏置可以随机分配。第3部分详细描述使用单隐藏层前馈神经网络（SLFNs）的ELM学习算法。第4部分中给出性能评估。第5部分中给出一些讨论和结论。在算法中起着重要作用的\textit{Moore-Penrose}广义逆变换和通用线性系统的最小化最小二乘解范数等内容，将在附录中简要介绍。
 
 
 \section{使用随机隐节点的单隐层前馈网络}
@@ -191,62 +205,156 @@ $g^{(l)}$表示函数$g$关于$b_i$的第$l$阶微分。然而，对于生成的
 		=&\underset{\bm \beta}{min}||{\bf{H}}({\bf{w}}_1,\dots,{\bf{w}}_{\tilde{N}},b_1,\dots,b_{\tilde{N}}){\bm \beta}-{\bf{T}}||
 	\end{split}
 \end{equation}
+如果隐节点的数量$\tilde{N}$跟特异样本的数量$N$相同，即$\tilde{N}=N$，当输入权重向量${\bf w}_i$和隐藏偏置$b_i$是随机生成的时候，${\bf H}$是一个方阵且可逆，此时SLFN可以以0误差逼近这些训练样本。
 
+然而，多数情况下，隐节点的数量要远少于特异样本的数量，即$\tilde{N}\ll N$，此时$\bf H$并不是一个方阵且使得${\bf{H}}\cdot{\bm{\beta}}={\bf{T}}$成立的${\bf{w}_i},b_i,{\bm{\beta}} (i=1,\dots,{\tilde{N}})$也不存在。基于一些前人的工作，上述线性方程组的最小范数最小二乘解为
+\begin{equation}\label{eq13}
+	\hat {\bm \beta}={\bf H}^{\dagger}{\bf T}
+\end{equation}
+这里的${\bf H}^{\dagger}$表示矩阵${\bf H}$的\textit{Moore–Penrose}广义逆矩阵。
 
-
-\section*{Requirements for the Paper}
-
-The thesis needs to be related to the content of the Cognitive Computing course. You may propose new algorithms, refine existing ones, or apply existing algorithms to your field of study. The paper can also be a literature review in cognitive computing or AI-related fields (from the recent three years).
-
-Requirements:
+\textbf{备注 1}\ 经过分析，ELM具有以下性质：
 \begin{enumerate}
-	\item The paper must be supported by experiments (a literature review doesn't need to include experiments, but there must be sufficient literature support), and relevant references need to be cited. For references, please use the IEEETran template included in this template.
-	\item You may write in Chinese or English, with at least 6 pages (excluding references) of content. Chinese Word template and \LaTeX templates in both Chinese and English have been uploaded onto the course website. You may choose to use any one of them.
-	\item No plagiarism of previous papers on this course or published articles nor direct translation of such articles is allowed. You will fail this course if caught doing any of the misbehaviors above.
+	\item \textit{最小训练误差}\ 特解$\hat {\bm \beta}={\bf H}^{\dagger}{\bf T}$是广义线性方程组${\bf{H}}\cdot{\bm{\beta}}={\bf{T}}$的一个最小二乘解，意味着最小训练误差可以通过下面的特解得到：
+	\begin{equation}\label{eq14}
+		||{\bf H}{\hat {\bm \beta}}-{\bf T}||=||{\bf H}{\bf H}^{\dagger}{\bf T}-{\bf T}||=\underset{\bm \beta}{min}||{\bf H}{\bm \beta}-{\bf T}||
+	\end{equation}
+	纵使大部分学习算法都希望得到这个最小误差，但大部分算法都会因为局部最小值问题或者不可能无限大的迭代次数而无法真正得到这个最小误差。
+	\item \textit{权重最小范数}\ 进一步来说，特解$\hat {\bm \beta}={\bf H}^{\dagger}{\bf T}$是广义线性方程组${\bf{H}}\cdot{\bm{\beta}}={\bf{T}}$所有最小二乘解中范数最小的解：
+	\begin{equation}\label{eq15}
+		\begin{split}
+			&||\hat {\bm \beta}||=||{\bf H}^{\dagger}{\bf T}||<||{\bm\beta}||,\ \forall {\bm\beta}\in\\
+			&\{{\bm\beta}:||{\bf H}{\bm\beta}-{\bf T}||\le{\bf H}{\bf z}-{\bf T}, \forall{\bf z}\in{\bf R}^{{\tilde N}\times N}\}
+		\end{split}
+	\end{equation}
+	\item $\hat {\bm \beta}={\bf H}^{\dagger}{\bf T}$是广义线性方程组${\bf{H}}\cdot{\bm{\beta}}={\bf{T}}$的惟一最小范数最小二乘解。
 \end{enumerate}
 
-Note:
+\subsection{用于SLFN的学习算法}
+
+此时，一个我们称之为“极限学习机ELM”的简单SLFN学习算法可以总结如下：
+
+\textbf{ELM 算法}\ 给定一个训练集$\aleph=\{({\bf x}_i,{\bf t}_i)\vert {\bf x}_i\in R^n,{\bf t}_i\in R^m,i=1,\dots,N\}$，激活函数$g(x)$，以及隐节点数量$\tilde N$，
+
+\textit{步骤 1}\ 随机为权重${\bf w}_i$和偏置$b_i$赋值，其中$i=1,\dots,{\tilde N}$；
+
+\textit{步骤 2}\ 计算隐层输出矩阵{\bf H}；
+
+\textit{步骤 3}\ 计算输出权重$\bm \beta$：
+	\begin{equation}\label{eq16}
+		{\bm \beta}={\bf H}^{\dagger}{\bf T}，
+	\end{equation}
+	其中${\bf T}=[{\bf t}_1,\dots,{\bf t}_N]^T$。
+
+\textbf{备注 2}\ 从定理2.1中可以看出，此算法适用于任何无限可微的激活函数$g(x)$，包括 s 形曲线函数、正弦、余弦函数、径向基函数以及一些非常规函数。根据定理2.1，所需要的隐节点的数量上限就是特异样本的数量，亦即$\tilde N \le N$。
+
+\textbf{备注 3}\ 一些他人的工作表明，带有$N$个隐节点的SLFN恰好可以区分$N$种不同的样本，然而我们证明，输入权重与隐层偏置如果是随机生成的，此结论仍然成立。我们还证明，在允许一定学习误差的情况下，SLFN所需要的隐节点数量可以更少。其它人的工作都需要调整输入权重和隐层偏置，或者输入权重随机生成但隐层偏置需要调整，而ELM是输入权重和隐层偏置都是随机生成的。
+
+\textbf{备注 4}\ 在其它一些工作中，也有人提出使用模块化网络，这类方法的思想是把训练样本划分为$L$个子集，然后分别使用$L$个不同的SLFN进行学习。记第$i$个子集对应的SLFN中的隐节点数量为$s_i$，这时我们应用ELM的话，会发现不同模块对应的SLFN中的隐节点实际上是趋同的，也就是说，在某个SLFN中第$i$个隐节点放到其它任意一个SLFN中的第$i$个隐节点的位置，模型仍然可以正常工作，隐节点所需要的总数量可取$max_i(s_i)$。在其它人的工作中，如果仅输出权重是随机生成的，隐层偏置需要调整的话，这样的方法则没有上述特性。
+
+\textbf{备注 5}\ 有几种不同的方法可以计算矩阵${\bf H}$的\textit{Moore–Penrose}广义逆矩阵。这些方法包括但不限于正交投影、正交化方法、迭代方法以及单值分解法（SVD）。其中正交化方法和迭代法里使用了查询和迭代，这是我们不想在ELM中使用的；正交投影方法在${\bf H}^T{\bf H}$非奇异且${\bf H}^{\dagger}=({\bf H}^T{\bf H})^{-1}{\bf H}^T$时可以使用，但是${\bf H}^T{\bf H}$并非总是非奇异的，所以这种方法也总是有效。只有SVD方法在任何情况下都可以用来计算${\bf H}$的\textit{Moore–Penrose}广义逆矩阵。
+
+\section{性能评估}
+
+我们将ELM算法与其它用于SLFN的流行算法（比如BP算法和支持向量机）在函数逼近与分类等领域的几个基准上进行比较。所有BP和ELM算法都在MATLAB6.5环境中执行，CPU为奔腾4（1.9GHz）。虽然BP算法有很多变体，我们这里采用的是\textit{Levenberg-Marquardt}算法，在MATLAB工具中有此方法的实现。SVM算法使用的是LIBSVM4，通过源代码编译而来，也在同一台计算机上执行。SVM使用的核函数是径向基函数，我们在ELM算法中使用的激活函数是$g(x)=1/(1+exp(-x))$。在数据处理上，所有的输入都初归一化到0到1的范围内，输出则被归一化到-1到1的范围内。在ELM算法中，主要的学习时间花费在计算隐层输出矩阵${\bf H}$的\textit{Moore-Penrose}广义逆上。
+
+\subsection{回归类问题基准}
+
+\subsubsection{手工成生数据-拟合带噪声的SinC函数}
+
+这里我们使用三种方法——BP算法、SVR算法和ELM算法——来似合SinC函数，这个函数通常用来验证SVR的有效性：
+\begin{empheq}[left={\eqmath[r]{A}{y(x)=}\empheqlbrace}]{alignat=2}
+	\begin{aligned}
+		& sin(x)/x, & x\ne0,\\
+		& 1, & x=0.
+	\end{aligned}
+\end{empheq}
+训练集$(x_i,y_i)$和测试集$(x_i,y_i)$共有5000条数据，其中$x_i$随机取自$(-10,10)$上的均匀分布。为了尽可能模拟真实情况，我们在训练集上添加了位于$[-0.2,0,2]$上均匀分布的噪声；测试集不添加噪声。
+
+在ELM算法和BP算法中，我们使用相同的隐节点数20。在测试中，在得到类似RSME的时候，ELM训练速度比BP快170倍。相比SVR，ELM的训练速度更是快了1000倍。
+
+\subsubsection{现实世界中的回归问题}
+
+这里我们在13个真实世界的基准数据集上对ELM、BP和SVR算法进行比较，在这些问题中，数据分布是未知的，而且其中大多数都含有噪声。对每一次测试，使用的训练和测试数据，都是基于整个数据集重新随机产生的。对ELM和BP算法而言，我们使用交叉验证方法以5为单位逐步地增加隐节点的数量，最终两个方法会得到数量接近的优化节点数。这里我们重复执行了50次实验，对ELM和BP算法分别取其中最好的结果来作比。从结果来看，ELM和SVR表现出了更好的泛化能力，在很多情况下比BP算法好一点点。ELM需要的隐节点数量似乎比BP算法要多一点，但是比SVR方法要紧致得多。在所有的测试中，ELM都是训练最快的，它比BP算法要快上几百倍。然而是测试的时候，BP的测试速度是最快的，这是因为BP模型通常拥有最紧凑的网络结构。另外，ELM算法的隐节点数量在很大范围内变化时，泛化能力可以一直保持稳定，只有在隐节点数量过少的时候，其泛化能力才开始有所下降。
+
+\subsection{中小规则分类问题上的基准测试}
+
+\subsubsection{关于糖尿病的医疗诊断}
+
+这里使用了由约翰霍普金斯大学应用物理实验室于1988年提供的\textit{Pima Indians Diabetes Database}，来比较ELM与其它一些流行算法之间的性能差异。这种诊断方法使用WHO的标准来对病人是否患有糖尿病作出一个二元判断。使用20个隐节点的ELM算法得到了77.57\%的准确率，略高于其它方法；而在学习速度上更是比BP算法快了约300倍，比SVM算法快了约15倍。
+
+\subsubsection{在中等规模分类问题上的应用}
+
+我们也在\textit{Banana database}和\textit{Statlog}里的一些多分类数据集（包括\textit{SatImage}、\textit{Segment}和班机降落控制数据库）上对ELM进行了测试。因\textit{Banana database}训练数据中存在大量重复数据，我们在进行训练的时候执行了去重操作，只保留了40,000条数据中的5200条数据。在训练结果不逊于甚至超过BP算法的情况下，ELM算法的训练速度达到了BP算法的4000多倍。
+
+\subsection{现实世界超大规模复杂问题上的基准测试}
+
+这里采用了美国森林服务区域2资源信息系统的数据，共有581,012条数据，每条数据有54个属性，我们将其划分为100,000条训练数据与481,012条测试数据。我们用ELM算法执行了50次测试，SVM算法实在太慢了，所以我们只测试了一次。ELM算法在获得了比SVM更好的泛化能力的情况下，只用了1.6分钟就完成训练；而SVM却用了12个小时之久；在测试集上，ELM算法消耗的时间尚不到1分钟，而SVM却使用了5.5个小时。BP算法则因为资源需求问题无法完成训练，然而从其它研究人员的报告来看，即使完成了训练，其结果准确度也比ELM算法要低9\%左右。
+
+\section{分析与结论}
+
+本文提出了一种简单且高效的基于SLFN的算法ELM，与其它流行的类似算法相比，它表现出了很多与众不同的特性：
 \begin{enumerate}
-	\item Before introducing others' work, make sure to spend a certain amount of space to clarify the problem definition.
-	\item For the methods proposed by yourself or the methods mentioned in the literature review, in addition to describing the method and experimental results, you can focus on analyzing the advantages and disadvantages of the method (according to your own understanding), and try to give thoughts on possible improvements.
-	\item Please check carefully whether all cross-references are compiled successfully. Avoid ``?'' appearing in the text, and also minimize typos and grammatical errors.
-	\item The necessary part of the references: author, title, publication journal or conference, publication time.
+	\item 训练速度极快。在同样的运行环境下，相比BP算法和SVM算法，ELM算法在很多基准测试中比其它算法要快上百倍甚至几千倍；
+	\item 在多数场景中，ELM算法的泛化能力都超过了基于后向传播的梯度算法；
+	\item 传统的基于梯度的训练方法都面临着局部最优、不合适的学习率以及过拟合等一系列问题，此时不得不采用一些额外的手段来解决此类问题。相比之下，ELM方法则来得更加简单且直接，不需要这些迂回方法；
+	\item 传统基于梯度的方法要求激活函数必须是可微的，但是ELM在很多不可微的激活函数上依然可以工作得很好。
 \end{enumerate}
 
-Extra points for:
+不过需要明确的是，基于梯度的后向传播优化算法适用于多隐层神经网络，但是ELM算法目前只支持单隐层神经网络，但是在理论上，ELM算法也可以支持多隐层神经网络。由此可见，ELM算法的可应用场景还是很多的。
+
+另外，虽然SVM并非神经网络算法，但是作为一种经过长时间讨论和研究并充分优化和应用过的算法，ELM在性能不输的情况下分类速度比SVM快出了几千倍，这个对比结果非常能体现出ELM的优势。
+
+当然，ELM还存在一些需要进一步探索的问题，比如ELM的全局逼近能力，以及它在稀疏高维数据上的应用。
+
+\section{在“返乡发展人群预测”中的应用}
+
+在ELM的官方主页\cite{ol:elmorg}中提供了一些ELM的实现代码，我们选择了其中的Python-ELM实现来完成对数据集的初步分析。
+
+样本数据集共有199,540条数据，其中70\%是训练数据，包括一部分无标签数据；剩余30\%是测试数据。数据维度包括：
 \begin{enumerate}
-	\item Innovative new algorithms,
-	\item solutions to problems that have practical/scientific values, and
-	\item comprehensive and insightful surveys that track state-of-the-art progress.
+	\item 位置类特特征：基于联通基站产生的用户信令数据；
+	\item 互联网类特征：基于联通用户上网产生的上网行为数据；
+	\item 通话类特征：基于联通用户日常通话、短信产生的数据。
 \end{enumerate}
+除去id和label，共22个特征维度。在执行训练之前，我们将所有数据维度进行了归一化处理；对非数值的特征，我们将其进行分类然后赋值到实数域中。
 
+\textbf{实验环境说明}\ 硬件环境为CPU intel i9-129000，内存32G；操作系统环境为Ubuntu22.04；代码编译及运行环境为Python3.10.13。
 
+在一系列初步测试中，我们发现sigmoid的训练准确率更高一些，因此激活函数我们使用sigmoid函数，隐节点数量取$N=2000$。在未进行任何特征选择与提取的情况下，在训练集上得到了约85\%的准确率。使用这个模型，我们对训练数据应用了ROC曲线下面积AUC分析，成功识别出了约训练集中占比约10\%的干扰数据。排除干扰数据后，在训练集上的训练准确率超过了89\%。
 
+得益于ELM的高效，我们可以快速对数据完成训练并获得优良的训练准确度，对我们进一步做特征的选择与提取提供了便利。
 
+进一步的，我们分析了单层ELM的节点数与其在训练集上准确率的表现，并记录如下：
 
+通过表格可以看出，ELM随着隐节点的数量增加，其在训练集上的准确率也不断有所提升，当然也伴随着一些时间消耗的增加。不过在最终测试中我们发现，当节点数量超过一定值时，其在测试集上的表现反而开始下降，也就是说隐节点数量过多的情况下，ELM也会出现过拟合的情况。
 
+\begin{table}[h!t]
+	\center
+	\caption{隐节点数量与训练集准确率}
+	\begin{tabular}{p{80pt}<{\centering}p{60pt}<{\centering}p{60pt}<{\raggedleft}}
+		\hline\\[-2.9mm]\hline
+		节点数量 & 准确率\% & 耗时(s) \\
+		\hline
+		1000 & 87.00 & 4.71\\
+		2000 & 87.66 & 14.31\\
+		3000 & 88.14 & 41.73\\
+		4000 & 88.54 & 75.53\\
+		5000 & 89.11 & 132.83\\
+		6000 & 89.54 & 192.33\\
+		7000 & 90.05 & 294.37\\
+		8000 & 90.38 & 380.13\\
+		9000 & 90.77 & 513.26\\
+		10000 & 91.16 & 600.02\\
+		\hline\\[-2.9mm]\hline
+	\end{tabular}
+\end{table}
 
-\section{引言}
+随后我们对训练数据执行了特征工程，使用相关性检测和离群点分析去掉一些相关性极低的维度和一部分离群点，执行训练之后发现准确度并没有明显的提升。由此似乎可以看出，ELM算法本身对离群点和无关维度就拥有比较强的区分能力，这也反映了ELM算法所具有的鲁棒性。
 
-中文论文请全文使用中文标点，除专业术语外不要出现英文；英文论文请全文使用英文标点，不要出现任何中文。
+\textbf{进一步的工作}\ 初步结果显示出了ELM的优势，但是总体结果尚未达到历史最高准确率，通过分析前人的工作，我认为，这并非ELM本身的问题，而是需要在特征工程上对特征进行进一步的处理，比如多维组合特征、特征变换等，相信通过进一步的特征工程，训练准确率会不断提升，时间与篇幅限制，这些工作我将在后续完成。
 
-\section{相关工作}
-
-参考文献引用方法，如图卷积神经网络\cite{kipf2017semi}，图注意力网络\cite{velivckovic2018graph}等。
-
-\section{模型}
-
-最好有配图和公式。
-
-\section{实验}
-
-实验数据支撑。
-
-\section{结论}
-
-论文要有明确的结论。
-
-\bibliography{reference_list}
+\bibliography{sctest}
 \bibliographystyle{IEEETran}
 
 \end{document}
