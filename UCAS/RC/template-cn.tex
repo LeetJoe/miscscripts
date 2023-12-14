@@ -3,6 +3,7 @@
 \IEEEoverridecommandlockouts
 
 \usepackage[UTF8]{ctex}
+\usepackage{fancyhdr}
 \usepackage{cite}
 \usepackage{epsfig}
 \usepackage{xcolor}
@@ -19,6 +20,9 @@
 \usepackage{cases}
 \usepackage[numbers,sort&compress]{natbib}
 \usepackage{amsmath,empheq,eqparbox}
+\usepackage[perpage,symbol,flushmargin]{footmisc}
+
+\renewcommand*\footnoterule{\hrule width 2.5cm height 0.4pt \vspace*{0.5ex}}
 
 \newcommand{\eqmath}[3][c]{%
 	% #1 = alignment, default c, #2 = label, #2 = math material
@@ -35,7 +39,18 @@
 \def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
     T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
 
+\fancypagestyle{mystyle}{%
+	\fancyhf{} % 清空页眉和页脚的设置
+	\fancyhead[LE,RO]{\thepage} % 在偶数页左侧和奇数页右侧显示页码
+	\fancyhead[RE]{\leftmark} % 在偶数页右侧显示当前章的标题
+	\fancyhead[LO]{\rightmark} % 在奇数页左侧显示当前节的标题
+	\renewcommand{\headrulewidth}{0.4pt} % 设置页眉下方横线的粗细为0.4pt
+	\renewcommand{\footrulewidth}{0pt} % 页脚上方无横线
+}
+
 \begin{document}
+	
+\pagestyle{mystyle}
 
 \title{ELM原理及其在数据预测中的简单应用}
 
@@ -309,7 +324,7 @@ $g^{(l)}$表示函数$g$关于$b_i$的第$l$阶微分。然而，对于生成的
 
 \section{在“返乡发展人群预测”中的应用}
 
-在ELM的官方主页\cite{ol:elmorg}中提供了一些ELM的实现代码，我们选择了其中的Python-ELM实现来完成对数据集的初步分析。
+在ELM的官方主页\cite{ol:elmorg}中提供了一些ELM的实现代码，我们选择了其中的Python-ELM实现来完成对数据集的初步分析。相关代码\footnote{https://github.com/LeetJoe/Python-ELM}存放在托管网站\testit{GITHUB}上，随着后续工作进展，仓库内容可能会更新。
 
 样本数据集共有199,540条数据，其中70\%是训练数据，包括一部分无标签数据；剩余30\%是测试数据。数据维度包括：
 \begin{enumerate}
@@ -327,11 +342,10 @@ $g^{(l)}$表示函数$g$关于$b_i$的第$l$阶微分。然而，对于生成的
 
 进一步的，我们分析了单层ELM的节点数与其在训练集上准确率的表现，并记录如下：
 
-通过表格可以看出，ELM随着隐节点的数量增加，其在训练集上的准确率也不断有所提升，当然也伴随着一些时间消耗的增加。不过在最终测试中我们发现，当节点数量超过一定值时，其在测试集上的表现反而开始下降，也就是说隐节点数量过多的情况下，ELM也会出现过拟合的情况。
-
 \begin{table}[h!t]
 	\center
 	\caption{隐节点数量与训练集准确率}
+	\label{tab:1}
 	\begin{tabular}{p{80pt}<{\centering}p{60pt}<{\centering}p{60pt}<{\raggedleft}}
 		\hline\\[-2.9mm]\hline
 		节点数量 & 准确率\% & 耗时(s) \\
@@ -349,6 +363,8 @@ $g^{(l)}$表示函数$g$关于$b_i$的第$l$阶微分。然而，对于生成的
 		\hline\\[-2.9mm]\hline
 	\end{tabular}
 \end{table}
+
+通过表格\ref{tab:1}可以看出，ELM随着隐节点的数量增加，其在训练集上的准确率也不断有所提升，当然也伴随着一些时间消耗的增加。不过在最终测试中我们发现，当节点数量超过一定值时，其在测试集上的表现反而开始下降，也就是说隐节点数量过多的情况下，ELM也会出现过拟合的情况。
 
 随后我们对训练数据执行了特征工程，使用相关性检测和离群点分析去掉一些相关性极低的维度和一部分离群点，执行训练之后发现准确度并没有明显的提升。由此似乎可以看出，ELM算法本身对离群点和无关维度就拥有比较强的区分能力，这也反映了ELM算法所具有的鲁棒性。
 
