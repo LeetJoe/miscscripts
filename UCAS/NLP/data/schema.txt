@@ -1,0 +1,1 @@
+Node: movie(title string,year int),actor(name string); Edge: played_in(year int).
