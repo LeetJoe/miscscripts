@@ -1,0 +1,7 @@
+*.swp
+*.pdf
+*.aux
+*.log
+*.blg
+*.bbl
+*.synctex.gz

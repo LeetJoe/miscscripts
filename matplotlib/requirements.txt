@@ -1,0 +1,14 @@
+ipython>=8.16.1
+matplotlib>=3.8.0
+numpy>=1.22.1
+pymc3>=3.11.5
+pyzmq>=25.1.1
+scipy>=1.7.3
+tornado>=6.3.3
+jupyter>=1.0.0
+
+# 上面的环境适用于python=3.10.13，后面这三个好像都不必要
+# jupyter 的安装可能需要特殊的步骤，可以先查一下
+wsgiref>=0.1.2; python_version < '3.0'
+praw>=2.0.0
+jinja2
