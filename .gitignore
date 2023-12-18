@@ -8,6 +8,7 @@ pyTorch/*.pth
 colossalChat/test/*
 openai/envvar.py
 */config.py
+*/*/config.py
 esearch/config.py
 postgresql/config.py
 utils/config.py
