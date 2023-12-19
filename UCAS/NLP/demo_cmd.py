@@ -3,6 +3,7 @@ import torch
 import argparse
 from transformers import LlamaForCausalLM, LlamaTokenizer, GenerationConfig
 
+from config import LLM_ego
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -23,10 +24,6 @@ if __name__ == "__main__":
         model = LlamaForCausalLM.from_pretrained(checkpoint, device_map="auto", torch_dtype=torch.float16)
     print("Model loaded.")
 
-    self_recog = ("You are a cypher expert and you can tranform the question of user into cypher format. "
-                  "Please use the given schema and complete the transformation. "
-                  "Only the cypher sentences should be printed.\n")
-
     with open(os.path.join(data_path, 'schema.txt'), 'r') as fs:
         cypher_schema = fs.read() + "\n"
 
@@ -37,7 +34,7 @@ if __name__ == "__main__":
             continue
 
         # 构造输入
-        input_text = self_recog + "### Schema: " + cypher_schema + "### User: " + current_user_input + "\n### Cypher: "
+        input_text = LLM_ego['en'] + "### Schema: " + cypher_schema + "### User: " + current_user_input + "\n### Cypher: "
         # print(input_text)
 
         input_ids = tokenizer(input_text, return_tensors="pt").input_ids.to("cuda")
