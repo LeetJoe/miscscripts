@@ -1,21 +1,25 @@
 import requests
 import json
+import replicate
 
 from elasticsearch import Elasticsearch
 from config import es as esconf
 
 
-def json_send(url, data=None, method="POST"):
+def json_send(url, data=None, extra_headers=None, method="POST"):
     headers = {"Content-type": "application/json",
                "Accept": "text/plain", "charset": "UTF-8"}
+    if extra_headers:
+        headers.update(extra_headers)
+
     if method == "POST":
-        if data != None:
+        if data is not None:
             response = requests.post(url=url, headers=headers, data=json.dumps(data))
         else:
             response = requests.post(url=url, headers=headers)
-    elif method == "GET":
+    else:
         response = requests.get(url=url, headers=headers)
-    return json.loads(response.text)
+    return response.json()
 
 
 def json_send_sea(query):
@@ -55,5 +59,3 @@ def json_send_sea(query):
     if not 'hits' in resp['hits'].keys():
         return []
     return [hit['_source']['from'] + hit['_source']['relation'] + hit['_source']['to'] for hit in resp['hits']['hits']]
-
-

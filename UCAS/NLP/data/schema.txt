@@ -1,1 +1,3 @@
-Node: movie(title string,year int),actor(name string); Edge: played_in(year int).
+Node: Director(name string,numberOfMoviesActedIn int),Actor(name string,numberOfMoviesActedIn int),Person(name string,numberOfMoviesActedIn int),Movie(title string, released date, year int, imdbRating float);
+Relationships: ACTED_IN[from Actor to Movie], DIRECTED[from Director to Movie];
+Notes: Actor and Director may have intersection; Person is the union of Director and Actor.
