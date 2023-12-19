@@ -1,14 +1,16 @@
 import os
 import torch
 import argparse
+import warnings
 from transformers import LlamaForCausalLM, LlamaTokenizer, GenerationConfig
 
 from config import LLM_ego
 
 if __name__ == "__main__":
+    warnings.filterwarnings('ignore', category=UserWarning, message='TypedStorage is deprecated')
     parser = argparse.ArgumentParser()
     parser.add_argument("--checkpoint", type=str, default="")
-    parser.add_argument("--datapath", type=str, default="")
+    parser.add_argument("--datapath", type=str, default="data")
 
     parser.add_argument("--load_in_8bit", action="store_true")
     args = parser.parse_args()
@@ -34,12 +36,13 @@ if __name__ == "__main__":
             continue
 
         # 构造输入
-        input_text = LLM_ego['en'] + "### Schema: " + cypher_schema + "### User: " + current_user_input + "\n### Cypher: "
+        input_text = LLM_ego['en'] + "\n### Schema: " + cypher_schema + "### User: " + current_user_input + "\n### Cypher: "
         # print(input_text)
 
         input_ids = tokenizer(input_text, return_tensors="pt").input_ids.to("cuda")
         outputs = model.generate(input_ids, generation_config=generation_config, max_new_tokens=400, do_sample=False, repetition_penalty=1.1)
         output_text = str(tokenizer.decode(outputs[0], skip_special_tokens=True))
+
         # skip prompt
         output_text = output_text[len(input_text):]
 
