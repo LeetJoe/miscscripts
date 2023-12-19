@@ -1,0 +1,153 @@
+
+
+
+### query
+请列出在1990年（含）到2000（不含）年之间发行的电影的名字。
+### output
+ MATCH (m:Movie)-[:DIRECTED]->(d:Director)
+WHERE d.released >= 1990 AND d.released <= 2000
+RETURN m.title
+
+
+告诉我10个人的名字。
+Here's a possible Cypher query that should return the names of 10 people who have acted in or directed movies:
+```cypher
+MATCH (p:Person)-[:ACTED_IN|:DIRECTED]->(m:Movie)
+RETURN p.name
+LIMIT 10
+```
+This query matches all people (using the `Person` label) who have either acted in or directed movies (using the `ACTED_IN` or `DIRECTED` relationships), and returns their names. The `LIMIT 10` clause limits the number of results returned to 10.
+
+
+Cloud Atlas是什么电影？
+ MATCH (m:Movie {title:"Cloud Atlas"})-[:DIRECTED]->(d:Director)-[:ACTED_IN]->(a:Actor) RETURN m.title, d.name, a.name
+
+
+Tom Hanks是谁？
+MATCH (a:Actor {name:'Tom Hanks'})-[:ACTED_IN]->(m:Movie) RETURN a.name, m.title, m.released, m.year, m.imdbRating
+
+
+
+既参演了Tom Hanks出演过的电影，又参演了Tom Cruise出演过的电影的演员，他们的名字、与Tom Hanks合作的电影的名字、与Tom Cruise合作的电影的名字分别是什么？
+
+Here's a possible Cypher query that could answer the user's question:
+```cypher
+MATCH (a:Actor)-[:ACTED_IN]->(m:Movie)<-[:DIRECTED]-(d:Director)
+WHERE a.name IN ['Tom Hanks', 'Tom Cruise'] AND m.title IN ['Forrest Gump', 'Jerry Maguire']
+RETURN a.name, m.title, d.name;
+```
+Explanation:
+
+* `MATCH` clause matches actors who have acted in movies directed by Tom Hanks or Tom Cruise.
+* `WHERE` clause filters the results to only include actors who have acted in movies with titles 'Forrest Gump' or 'Jerry Maguire'.
+* `RETURN` clause returns the names of the actors, the titles of the movies they acted in, and the names of the directors who directed those movies.
+
+
+
+Tom Hanks出演过的电影里的所有演员里，曾与他们在同一部电影中合作演出过的演员（不包括Tom Hanks）的演员名字以及每个人的参演次数是多少？结果按参演次数倒序排列。
+
+Here's a possible Cypher query that should solve the problem:
+```cypher
+MATCH (a:Actor)-[:ACTED_IN]->(m:Movie)<-[:ACTED_IN]-(b:Actor)
+WHERE a.name = 'Tom Hanks'
+RETURN b.name, COUNT(m) AS num_movies
+ORDER BY num_movies DESC;
+```
+Explanation:
+
+* `MATCH` finds all movies (`m`) that have an actor (`a`) with name `'Tom Hanks'` who has acted in them. The `-[:ACTED_IN]->` part matches the relationship between the actor and the movie.
+* `<-[:ACTED_IN]-(b:Actor)` finds all actors (`b`) who have also acted in the same movies as `a`. The `<-[:ACTED_IN]` part matches the inverse of the `ACTED_IN` relationship.
+* `WHERE` filters out any movies or actors that don't match the condition.
+* `RETURN` returns the names of the actors (`b.name`) and the count of movies they have acted in (`COUNT(m)`).
+* `ORDER BY` sorts the results by the number of movies descending.
+
+Note: This assumes that there is no edge case where two actors have the same name, and that the `name` property of the `Actor` node is unique. If this is not the case, additional filtering may be needed to ensure correct results.
+
+
+
+
+从Kevin Bacon到Meg Ryan之间的最短路径是什么？
+
+PATH FROM Kevin Bacon TO Meg Ryan OF SHORTEST PATH length WHERE NOT (Type:ACTED_IN OR Type:DIRECTED)
+
+EXPLANATION:
+
+* We start by specifying the starting node (Kevin Bacon) and the ending node (Meg Ryan).
+* We use the `PATH` function to find the shortest path between the two nodes.
+* We specify that we want to exclude any relationships that are not of type `ACTED_IN` or `DIRECTED`. This is because we only want to consider paths that involve actors and directors, and not any other types of relationships.
+* The `WHERE` clause filters out any paths that contain a non-empty sequence of nodes that are not of type `ACTED_IN` or `DIRECTED`. This ensures that we only get paths that go from an actor to a movie, or from a director to a movie.
+* Finally, we use the `length` property to get the length of the shortest path, which gives us the number of hops required to go from Kevin Bacon to Meg Ryan.
+
+
+
+与Kevin Bacon在1～4步之内相关联的不同节点有哪些？
+
+Here's a possible Cypher query that should answer the user's question:
+```cypher
+MATCH p = (a:Actor)-[:ACTED_IN*1..4]->(m:Movie)
+RETURN distinct nodes(p)
+```
+Explanation:
+
+* `MATCH` clause specifies the pattern we want to match in the graph. In this case, we're looking for paths that start with an actor node (`a:Actor`) and end with a movie node (`m:Movie`), with up to 4 hops in between. The `*` symbol indicates that we want to match any number of nodes between 1 and 4.
+* `DISTINCT NODES` clause returns only the distinct nodes in the matching path. This is important because we don't want to include duplicate nodes in the result set.
+
+Note that this query assumes that the relationship between actors and movies is represented by the `ACTED_IN` relationship. If the relationships are represented differently in your schema, you'll need to adjust the query accordingly.
+Generated in 20.64 seconds
+
+
+
+所有与电影Cloud Atlas有关的人的名字以及他们与这部电影的关系是什么？
+
+ MATCH (p:Person)-[:ACTED_IN]->(m:Movie {title: 'Cloud Atlas'})-[:DIRECTED]->(d:Director)
+RETURN p.name, d.name, m.title, m.released, m.year, m.imdbRating
+
+
+
+曾经跟Tom Hanks在同一部电影里合作过的演员的名字有哪些？
+
+ MATCH (a:Actor)-[:ACTED_IN]->(m:Movie)<-[:DIRECTED]-(d:Director)
+WHERE a.name = 'Tom Hanks'
+RETURN a.name, m.title, d.name
+
+
+
+请列出《Cloud Atlas》这部电影的导演的名字。
+
+ MATCH p = (d:Director)-[:DIRECTED]->(m:Movie {title: "Cloud Atlas"}) RETURN d.name
+
+
+
+Tom Hanks都出演过哪些电影？
+
+ MATCH (a:Actor {name:'Tom Hanks'})-[:ACTED_IN]->(m:Movie) RETURN m.title, m.released, m.year, m.imdbRating
+
+
+
+
+请列出在1990年（含）到2000（不含）年之间发行的电影的名字。
+
+ MATCH (m:Movie)-[:DIRECTED]->(d:Director)
+WHERE d.released >= 1990 AND d.released <= 2000
+RETURN m.title
+
+
+
+告诉我10个人的名字。
+
+
+ SELECT name FROM Person WHERE numberOfMoviesActedIn > 5 ORDER BY numberOfMoviesActedIn DESC LIMIT 10;
+
+
+
+Cloud Atlas是什么电影？
+
+ MATCH (m:Movie {title:"Cloud Atlas"})-[:DIRECTED]->(d:Director)-[:ACTED_IN]->(a:Actor) RETURN m.title, d.name, a.name
+
+
+
+Tom Hanks是谁？
+
+ MATCH (a:Actor {name:"Tom Hanks"})-[:ACTED_IN]->(m:Movie) RETURN a.name, m.title, m.released, m.year, m.imdbRating
+
+

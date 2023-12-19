@@ -1,0 +1,242 @@
+
+
+Who have acted in not only a movie that Tom Hanks has acted in but also a movie that Tom Cruise has acted in? Please list their names, the name of the movie he/she co-acted in with Tom Hanks, and the name of the movie he/she co-acted in with Tom Cruise.
+
+ MATCH (a:Actor)-[:ACTED_IN]->(m:Movie)<-[:ACTED_IN]-(b:Actor)
+WHERE a.name = 'Tom Hanks' AND b.name = 'Tom Cruise'
+RETURN a.name AS actor1, m.title AS movie1, b.name AS actor2, m.title AS movie2
+
+MATCH (d:Director)-[:DIRECTED]->(m:Movie)<-[:DIRECTED]-(c:Director)
+WHERE d.name = 'Tom Hanks' AND c.name = 'Tom Cruise'
+RETURN d.name AS director1, m.title AS movie1, c.name AS director2, m.title AS movie2
+
+
+
+Of all the actors in the movies that Tom Hanks has appeared in, the names of all the actors (excluding Tom Hanks) who have appeared with them in the same movie, and the number of times each has appeared in these movies? Please list the results in reverse order of the number of the times.
+
+Here's the transformed Cypher query:
+```cypher
+WITH movies = Movie
+WHERE ACTED_IN.actor IN (SELECT name FROM Actor WHERE ACTED_IN.movie = movies.title)
+AND ACTED_IN.director = 'Tom Hanks'
+RETURN DISTINCT ACTED_IN.actor, COUNT(*) AS numAppearances
+ORDER BY numAppearances DESC;
+```
+Explanation:
+
+1. The first line `WITH movies = Movie` introduces a new named variable `movies` that refers to the `Movie` node.
+2. The second line `WHERE ACTED_IN.actor IN (SELECT name FROM Actor WHERE ACTED_IN.movie = movies.title)` filters the movies to only those where at least one actor has appeared in a movie directed by Tom Hanks.
+3. The third line `AND ACTED_IN.director = 'Tom Hanks'` filters the actors to only those who have appeared in a movie directed by Tom Hanks.
+4. The fourth line `RETURN DISTINCT ACTED_IN.actor, COUNT(*) AS numAppearances` returns the names of all actors (excluding Tom Hanks) who have appeared in the same movie as Tom Hanks, along with the number of times they have appeared in these movies. The `COUNT(*)` function counts the number of occurrences of each actor in the filtered movies.
+5. The fifth line `ORDER BY numAppearances DESC` sorts the results in reverse order of the number of appearances.
+
+
+
+What is the shortest path from Kevin Bacon to Meg Ryan?
+
+ MATCH path = (bacon:Actor {name:'Kevin Bacon'})-[:ACTED_IN*2..3]->(ryan:Actor {name:'Meg Ryan'}) RETURN path
+
+
+
+What are the different nodes associated with Kevin Bacon within 1 to 4 steps?
+
+ MATCH (k:KevinBacon {name:"Kevin Bacon"})-[:ACTED_IN*1..4]->(m) RETURN m
+
+
+
+What are the names of the persons associated with the movie Cloud Atlas and their relationship to the movie?
+
+ MATCH (p:Person)-[:ACTED_IN|:DIRECTED]->(m:Movie {title:"Cloud Atlas"}) RETURN p.name, type(m)
+
+
+
+
+What are the names of the actors who have acted with Tom Hanks in the same movie?
+
+ MATCH (a:Actor {name:'Tom Hanks'})-[:ACTED_IN]->(m:Movie)-[:ACTED_IN]-(b:Actor) RETURN b.name
+
+
+
+
+Please list the names of the directors of the movie "Cloud Atlas".
+
+ MATCH (d:Director)-[:DIRECTED]->(m:Movie {title:"Cloud Atlas"}) RETURN d.name
+
+
+
+What movies has Tom Hanks appeared in?
+
+ MATCH (a:Actor {name:'Tom Hanks'})-[:ACTED_IN]->(m:Movie) RETURN m.title, m.released, m.year, m.imdbRating
+
+
+
+Please list the titles of movies released between 1990 (inclusive) and 2000 (exclusive).
+
+ MATCH path = (m:Movie {released: >= 1990, <= 2000})-[:DIRECTED]->() RETURN m.title
+
+
+
+List 10 names of persons.
+
+Sure! Here are ten names of persons that can be found in the graph:
+
+1. Tom Hanks
+2. Leonardo DiCaprio
+3. Martin Scorsese
+4. Meryl Streep
+5. Denzel Washington
+6. Christopher Nolan
+7. Emma Stone
+8. Ryan Gosling
+9. Jennifer Lawrence
+10. Steven Spielberg
+
+Here's the Cypher query to retrieve these names:
+```cypher
+MATCH (p:Person)-[:ACTED_IN]->(m:Movie) RETURN p.name
+```
+This query matches all persons `p` who have acted in at least one movie `m`, and returns their names.
+
+
+
+What movie is Cloud Atlas?
+
+ MATCH (m:Movie {title:"Cloud Atlas"}) RETURN m
+
+
+
+Who is Tom Hanks?
+
+ MATCH (p:Person {name:'Tom Hanks'})-[:ACTED_IN]->(m:Movie) RETURN p.name, m.title, m.released, m.year, m.imdbRating
+
+
+
+Who have acted in not only a movie that Tom Hanks has acted in but also a movie that Tom Cruise has acted in? Please list their names, the name of the movie he/she co-acted in with Tom Hanks, and the name of the movie he/she co-acted in with Tom Cruise.
+
+ MATCH (a:Actor)-[:ACTED_IN]->(m:Movie)<-[:ACTED_IN]-(b:Actor)
+WHERE a.name = 'Tom Hanks' AND b.name = 'Tom Cruise'
+RETURN a.name AS actor1, m.title AS movie1, b.name AS actor2, m.title AS movie2
+
+MATCH (d:Director)-[:DIRECTED]->(m:Movie)
+WHERE d.name IN ['Tom Hanks', 'Tom Cruise']
+RETURN d.name AS director, m.title AS movie
+
+MATCH (p:Person)-[:ACTED_IN|:DIRECTED]->(m:Movie)
+WHERE p.name IN ['Tom Hanks', 'Tom Cruise']
+RETURN p.name AS person, m.title AS movie
+
+
+
+
+Of all the actors in the movies that Tom Hanks has appeared in, the names of all the actors (excluding Tom Hanks) who have appeared with them in the same movie, and the number of times each has appeared in these movies? Please list the results in reverse order of the number of the times.
+
+Here's the transformed Cypher query:
+```cypher
+MATCH p = (a:Actor)-[:ACTED_IN]->(m:Movie {released: range(1980, 2020)})-[:DIRECTED]->(d:Director {name: 'Tom Hanks'})
+RETURN p.actors = collect(distinct n.name)
+WHERE n.name != d.name
+ORDER BY p.count() DESC
+```
+Explanation:
+
+* `MATCH` clause finds the paths from an actor to a movie and then to a director, using the `ACTED_IN` and `DIRECTED` relationships. The director's name is restricted to "Tom Hanks".
+* `RETURN` clause specifies the output, which includes the list of actors (excluding Tom Hanks) who have appeared in the same movies as Tom Hanks, and the count of their appearances.
+* `WHERE` clause filters out any actors who have the same name as the director.
+* `ORDER BY` clause sorts the results in descending order based on the count of appearances.
+
+
+
+What is the shortest path from Kevin Bacon to Meg Ryan?
+
+ MATCH path = (bacon:Actor {name:'Kevin Bacon'})-[:ACTED_IN*2..3]->(ryan:Actor {name:'Meg Ryan'}) RETURN path
+
+
+
+What are the different nodes associated with Kevin Bacon within 1 to 4 steps?
+
+ MATCH (k:KevinBacon {name: 'Kevin Bacon'})-[:ACTED_IN*1..4]->(m) RETURN m
+
+
+
+What are the names of the persons associated with the movie Cloud Atlas and their relationship to the movie?
+
+ MATCH (p:Person)-[:ACTED_IN|:DIRECTED]->(m:Movie {title:"Cloud Atlas"}) RETURN p.name, type(m)
+
+
+
+
+What are the names of the actors who have acted with Tom Hanks in the same movie?
+
+ MATCH (a:Actor {name:'Tom Hanks'})-[:ACTED_IN]->(m:Movie)-[:ACTED_IN]-(b:Actor) RETURN b.name
+
+
+
+Please list the names of the directors of the movie "Cloud Atlas".
+
+ MATCH (d:Director)-[:DIRECTED]->(m:Movie {title:"Cloud Atlas"}) RETURN d.name
+
+
+
+What movies has Tom Hanks appeared in?
+
+ MATCH (a:Actor {name: 'Tom Hanks'})-[:ACTED_IN]->(m:Movie) RETURN m.title, m.released, m.year, m.imdbRating
+
+
+
+Please list the titles of movies released between 1990 (inclusive) and 2000 (exclusive).
+
+ MATCH path = (m:Movie {released: '1990-01-01'..'2000-12-31'}) RETURN m.title
+
+
+
+List 10 names of persons.
+
+ Here are ten names of persons that can be retrieved using Cypher:
+
+1. Tom Hanks
+2. Leonardo DiCaprio
+3. Martin Scorsese
+4. Meryl Streep
+5. Denzel Washington
+6. Christopher Nolan
+7. Julia Roberts
+8. Steven Spielberg
+9. Jennifer Lawrence
+10. Francis Ford Coppola
+
+Cypher query:
+```
+MATCH (p:Person)-[:ACTED_IN]->(m:Movie) RETURN p.name
+```
+Explanation: This query matches all Persons (p) who have acted in at least one movie (m), and returns their names. The `:ACTED_IN` relationship is used to traverse from the Person node to the Movie node.
+
+
+
+What movie is Cloud Atlas?
+
+ MATCH (m:Movie {title:"Cloud Atlas"}) RETURN m
+
+
+
+Who is Tom Hanks?
+
+ MATCH (p:Person {name: 'Tom Hanks'})-[:ACTED_IN]->(m:Movie) RETURN p.name, m.title, m.released, m.year, m.imdbRating
+
+
+
+
+Who is Tom Hanks?
+
+ MATCH (p:Person {name:'Tom Hanks'})-[:ACTED_IN]->(m:Movie) RETURN p.name, m.title, m.released, m.year, m.imdbRating
+
+
+
+Who is Tom Hanks?
+
+ MATCH (a:Actor {name:'Tom Hanks'})-[:ACTED_IN]->(m:Movie) RETURN m.title, m.released, m.year, m.imdbRating
+
+
+
+
+
+
