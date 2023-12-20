@@ -10,6 +10,7 @@ url = 'https://api.replicate.com/v1/predictions'
 
 if __name__ == "__main__":
     data_path = "data"
+    result_path = "result"
     with open(os.path.join(data_path, 'schema.txt'), 'r') as fs:
         cypher_schema = fs.read() + "\n"
     fs.close()
@@ -70,11 +71,13 @@ if __name__ == "__main__":
                 print(str_output)
                 result.append("### query:" + current_query + "\n### LLM output:\n" + str_output + "\n\n\n\n")
                 time.sleep(2)
+        fr.close()
 
         # save to file
-        with open(os.path.join(data_path, 'result_llama2_70B_expert_{}.txt'.format(lang)), 'w') as fo:
+        with open(os.path.join(result_path, 'result_llama2_70B_expert_{}.txt'.format(lang)), 'w') as fo:
             for line in result:
                 fo.write(line)
 
+        fo.close()
         print("Finished")
 
