@@ -19,23 +19,25 @@ python demo_cmd.py --checkpoint /home/neo/work/data/cnllama2
 
 ### 使用的 LLM 
 
-主要使用 LLaMA2-7B-hf 进行实验。
+主要使用 [LLaMA2-7B-hf](https://huggingface.co/meta-llama/Llama-2-7b-chat-hf) 进行实验。
 
 用于对比实验的 LLM
 
-* [Chinese-LLaMA2](https://huggingface.co/michaelwzhu/Chinese-LlaMA2-chat-7B-sft-v0.3)([github](https://github.com/michael-wzhu/Chinese-LlaMA2))；
+* [Chinese-LlaMA2-chat-7B-sft-v0.3](https://huggingface.co/michaelwzhu/Chinese-LlaMA2-chat-7B-sft-v0.3)（[github](https://github.com/michael-wzhu/Chinese-LlaMA2)）；
+
+* [lawyer-llama-13b-beta1.0](https://huggingface.co/pkupie/lawyer-llama-13b-beta1.0)（[github](https://github.com/AndrewZhe/lawyer-llama)）；
 
 * [replicate LLaMA2-70B](https://replicate.com/)；
 
-* [ngql-gpt](https://ngql-gpt.siwei.io/)([github](https://github.com/wey-gu/NebulaGraph-GPT))；
-
-
-> 注：gnql-gpt 的执行效果非常好，但是对中文进行转换时，长语句会出现截断的情况，导致生成的结果不全。
-
-> LLaMA2-70B 还是会输出很多非 Cypher 的内容，需要进一步构建 prompt 里的知识来排除这些内容。（可以就使用这些结果，最终的目标是评测 LLaMA-7B，对它优化 prompt 即可。）
+* [ngql-gpt](https://ngql-gpt.siwei.io/)（[github](https://github.com/wey-gu/NebulaGraph-GPT)）；
 
 
 todo: 
+
+
+> 注：gnql-gpt 的执行效果非常好，但是对中文进行转换时，长语句会出现截断的情况，导致生成的结果不全。
+> LLaMA2-70B 对于复杂的问题还是会输出很多非 Cypher 的内容，需要进一步构建 prompt 里的知识来排除这些内容。（可以就使用这些结果，最终的目标是评测 LLaMA-7B，对它优化 prompt 即可。）
+
 
 1. 对所有的结果进行评估，制作表格，按照 完全正确或接近完全正确 - A，能理解到基本意图但是不准确，但是结果仍具参考价值 - B，对意图的理解错误或非 Cypher 格式等，结果几乎不可用 - C；
 2. 对 LLaMA-7B 英文执行效果做重点分析，其它只要执行一遍，对比说明下即可。录制视频（查一下用什么录屏工具）。

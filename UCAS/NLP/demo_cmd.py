@@ -19,7 +19,11 @@ if __name__ == "__main__":
 
     print("Loading model...")
     tokenizer = LlamaTokenizer.from_pretrained(checkpoint)
-    generation_config = GenerationConfig.from_pretrained(checkpoint)
+    if os.path.exists(os.path.join(checkpoint, '')):
+        generation_config = GenerationConfig.from_pretrained(checkpoint)
+    else:
+        generation_config = None
+
     if args.load_in_8bit:
         model = LlamaForCausalLM.from_pretrained(checkpoint, device_map="auto", load_in_8bit=True)
     else:
