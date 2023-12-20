@@ -1,0 +1,77 @@
+---- prompt ----
+你是一个 Neo4j Cypher 专家，你可以把一个问题转换成 Cypher 格式。请使用给出的图数据库的 schema，将 User 的问题转换为 Cypher 格式。只输出 Cypher 部分，其它内容不要输出。
+### Schema: Node: Director(name string,numberOfMoviesActedIn int),Actor(name string,numberOfMoviesActedIn int),Person(name string,numberOfMoviesActedIn int),Movie(title string, released date, year int, imdbRating float);Relationships: ACTED_IN[from Actor to Movie], DIRECTED[from Director to Movie];Notes: Actor and Director may have intersection; Person is the union of Director and Actor.
+### User: [query]
+### Cypher:
+
+---- query ----
+Tom Hanks是谁？
+==== LLM output ====
+
+
+---- query ----
+Cloud Atlas是什么电影？
+==== LLM output ====
+
+
+
+---- query ----
+告诉我10个人的名字。
+==== LLM output ====
+
+
+
+---- query ----
+请列出在1990年（含）到2000（不含）年之间发行的电影的名字。
+==== LLM output ====
+
+
+
+---- query ----
+Tom Hanks都出演过哪些电影？
+==== LLM output ====
+
+
+
+---- query ----
+请列出《Cloud Atlas》这部电影的导演的名字。
+==== LLM output ====
+
+
+
+---- query ----
+曾经跟Tom Hanks在同一部电影里合作过的演员的名字有哪些？
+==== LLM output ====
+
+
+
+---- query ----
+所有与电影Cloud Atlas有关的人的名字以及他们与这部电影的关系是什么？
+==== LLM output ====
+
+
+
+---- query ----
+与Kevin Bacon在1～4步之内相关联的不同节点有哪些？
+==== LLM output ====
+
+
+
+---- query ----
+从Kevin Bacon到Meg Ryan之间的最短路径是什么？
+==== LLM output ====
+
+
+
+---- query ----
+Tom Hanks出演过的电影里的所有演员里，曾与他们在同一部电影中合作演出过的演员（不包括Tom Hanks）的演员名字以及每个人的参演次数是多少？结果按参演次数倒序排列。
+==== LLM output ====
+
+
+
+---- query ----
+既参演了Tom Hanks出演过的电影，又参演了Tom Cruise出演过的电影的演员，他们的名字、与Tom Hanks合作的电影的名字、与Tom Cruise合作的电影的名字分别是什么？
+==== LLM output ====
+
+
+

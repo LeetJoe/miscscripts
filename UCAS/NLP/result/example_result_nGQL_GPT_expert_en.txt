@@ -1,0 +1,98 @@
+---- schema ----
+Schema: Node: Director(name string,numberOfMoviesActedIn int),Actor(name string,numberOfMoviesActedIn int),Person(name string,numberOfMoviesActedIn int),Movie(title string, released date, year int, imdbRating float);Relationships: ACTED_IN[from Actor to Movie], DIRECTED[from Director to Movie];Notes: Actor and Director may have intersection; Person is the union of Director and Actor.
+
+---- query ----
+Who is Tom Hanks?
+==== LLM output ====
+// Who is Tom Hanks?
+MATCH (v:Person)-[:ACTED_IN|DIRECTED]->(v1:Movie)
+    WHERE v.Person.name == "Tom Hanks"
+RETURN v.Person.name, v.Person.numberOfMoviesActedIn
+
+---- query ----
+What movie is Cloud Atlas?
+==== LLM output ====
+// What movie is Cloud Atlas?
+MATCH (v:Movie)
+    WHERE v.Movie.title == "Cloud Atlas"
+RETURN v.Movie.title
+
+---- query ----
+List 10 names of persons.
+==== LLM output ====
+// List 10 names of persons.
+MATCH (v:Person)
+RETURN v.name LIMIT 10
+
+---- query ----
+Please list the titles of movies released between 1990 (inclusive) and 2000 (exclusive).
+==== LLM output ====
+// List the titles of movies released between 1990 (inclusive) and 2000 (exclusive).
+MATCH (v:Movie)
+    WHERE v.Movie.released >= date("1990-01-01") AND v.Movie.released < date("2000-01-01")
+RETURN v.Movie.title
+
+---- query ----
+What movies has Tom Hanks appeared in?
+==== LLM output ====
+// What movies has Tom Hanks appeared in?
+MATCH (v:Person)-[e:ACTED_IN]->(v1:Movie)
+    WHERE v.Person.name == "Tom Hanks"
+RETURN v1.Movie.title
+
+---- query ----
+Please list the names of the directors of the movie "Cloud Atlas".
+==== LLM output ====
+// Please list the names of the directors of the movie "Cloud Atlas".
+MATCH (v:Director)-[e:DIRECTED]->(v1:Movie)
+    WHERE v1.Movie.title == "Cloud Atlas"
+RETURN v.Director.name
+
+---- query ----
+What are the names of the actors who have acted with Tom Hanks in the same movie?
+==== LLM output ====
+// What are the names of the actors who have acted with Tom Hanks in the same movie?
+MATCH (d:Person)-[r1:ACTED_IN]->(m:Movie)<-[r2:ACTED_IN]-(a:Person)
+WHERE d.Person.name == "Tom Hanks"
+RETURN a.Person.name
+
+---- query ----
+What are the names of the persons associated with the movie Cloud Atlas and their relationship to the movie?
+==== LLM output ====
+// What are the names of the persons associated with the movie Cloud Atlas and their relationship to the movie?
+MATCH (v:Person)-[e:ACTED_IN|DIRECTED]->(v1:Movie)
+    WHERE v1.Movie.title == "Cloud Atlas"
+RETURN v.Person.name, type(e)
+
+---- query ----
+What are the different nodes associated with Kevin Bacon within 1 to 4 steps?
+==== LLM output ====
+// What are the different nodes associated with Kevin Bacon within 1 to 4 steps?
+MATCH (v:Person {name: "Kevin Bacon"})-[*1..4]-(v1:Person)
+    WHERE (v1:Actor OR v1:Director OR v1:Movie)
+RETURN v1
+
+---- query ----
+What is the shortest path from Kevin Bacon to Meg Ryan?
+==== LLM output ====
+// What is the shortest path from Kevin Bacon to Meg Ryan?
+MATCH p=shortestPath((v:Person{name:"Kevin Bacon"})-[:ACTED_IN|DIRECTED*..15]-(v1:Person{name:"Meg Ryan"}))
+RETURN p
+
+---- query ----
+Of all the actors in the movies that Tom Hanks has appeared in, the names of all the actors (excluding Tom Hanks) who have appeared with them in the same movie, and the number of times each has appeared in these movies? Please list the results in reverse order of the number of the times.
+==== LLM output ====
+// Of all the actors in the movies that Tom Hanks has appeared in, the names of all the actors (excluding Tom Hanks) who have appeared with them in the same movie, and the number of times each has appeared in these movies? Please list the results in reverse order of the number of the times.
+MATCH (a:Actor)-[:ACTED_IN]->(m:Movie)<-[:ACTED_IN]-(b:Actor)
+WHERE a.name == "Tom Hanks" AND b.name <> "Tom Hanks"
+WITH b.name AS actorName, count(*) AS numOfMoviesActedIn
+RETURN actorName, numOfMoviesActedIn
+ORDER BY numOfMoviesActedIn DESC
+
+---- query ----
+Who have acted in not only a movie that Tom Hanks has acted in but also a movie that Tom Cruise has acted in? Please list their names, the name of the movie he/she co-acted in with Tom Hanks, and the name of the movie he/she co-acted in with Tom Cruise.
+==== LLM output ====
+// Who have acted in not only a movie that Tom Hanks has acted in but also a movie that Tom Cruise has acted in? Please list their names, the name of the movie he/she co-acted in with Tom Hanks, and the name of the movie he/she co-acted in with Tom Cruise.
+MATCH (a1:Actor)-[:ACTED_IN]->(m1:Movie)<-[:ACTED_IN]-(a2:Actor {name:"Tom Hanks"}),
+(a1)-[:ACTED_IN]->(m2:Movie)<-[:ACTED_IN]-(a3:Actor {name:"Tom Cruise"})
+RETURN a1.name, m1.title, m2.title

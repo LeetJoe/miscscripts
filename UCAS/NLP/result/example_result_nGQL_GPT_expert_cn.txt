@@ -1,0 +1,88 @@
+---- schema ----
+Schema: Node: Director(name string,numberOfMoviesActedIn int),Actor(name string,numberOfMoviesActedIn int),Person(name string,numberOfMoviesActedIn int),Movie(title string, released date, year int, imdbRating float);Relationships: ACTED_IN[from Actor to Movie], DIRECTED[from Director to Movie];Notes: Actor and Director may have intersection; Person is the union of Director and Actor.
+
+---- query ----
+Tom Hanks是谁？
+==== LLM output ====
+ // Tom Hanks是谁？
+MATCH (v:Person)
+    WHERE v.Person.name == "Tom Hanks"
+RETURN v.Person.name
+
+---- query ----
+Cloud Atlas是什么电影？
+==== LLM output ====
+// Cloud Atlas是什么电影？
+MATCH (m:Movie)
+    WHERE m.title = "Cloud Atlas"
+RETURN m.title
+
+---- query ----
+告诉我10个人的名字。
+==== LLM output ====
+// Get the names of 10 people
+MATCH (v:Person)-[r:ACTED_IN|DIRECTED]->(v1:Movie)
+RETURN v.Person.name LIMIT 10
+
+---- query ----
+请列出在1990年（含）到2000（不含）年之间发行的电影的名字。
+==== LLM output ====
+// 请列出在1990年（含）到2000（不含）年之间发行的电影的名字。
+MATCH (v:Movie)
+    WHERE v.Movie.released >= date("1990-01-01") AND v.Movie.released < date("2000-01-01")
+RETURN v.Movie.title
+
+---- query ----
+Tom Hanks都出演过哪些电影？
+==== LLM output ====
+// Tom Hanks 都出演过哪些电影？
+MATCH (v:Actor)-[e:ACTED_IN]->(v1:Movie)
+    WHERE v.Actor.name == "Tom Hanks"
+RETURN v1.Movie.title
+
+---- query ----
+请列出《Cloud Atlas》这部电影的导演的名字。
+==== LLM output ====
+// Get the name of the director of the movie "Cloud Atlas"
+MATCH (v:Director)-[e:DIRECTED]->(v1:Movie)
+    WHERE v1.Movie.title == "Cloud Atlas"
+RETURN v.Director.name
+
+---- query ----
+曾经跟Tom Hanks在同一部电影里合作过的演员的名字有哪些？
+==== LLM output ====
+// Get the names of the actors who have worked with Tom Hanks in the same movie
+MATCH (v1:Actor)-[e:ACTED_IN]->(v2:Movie)<-[e1:ACTED_IN]-(v3:Actor)
+    WHERE v1.Actor.name == "Tom Hanks"
+RETURN v3.Actor.name
+
+---- query ----
+所有与电影Cloud Atlas有关的人的名字以及他们与这部电影的关系是什么？
+==== LLM output ====
+// Get the names and relationships of all people related to the movie "Cloud Atlas"
+MATCH (v:Person)-[e]->(v1:Movie)
+    WHERE v1.Movie.title == "Cloud Atlas"
+RETURN v.Person.name, type(e)
+
+---- query ----
+与Kevin Bacon在1～4步之内相关联的不同节点有哪些？
+==== LLM output ====
+// Get the nodes related to Kevin Bacon within 1 to 4 steps.
+MATCH (kevin:Actor {name: 'Kevin Bacon'})
+OPTIONAL MATCH (kevin)-[:ACTED_IN*1..4]-(node)
+RETURN DISTINCT node
+
+---- query ----
+Tom Hanks出演过的电影里的所有演员里，曾与他们在同一部电影中合作演出过的演员（不包括Tom Hanks）的演员名字以及每个人的参演次数是多少？结果按参演次数倒序排列。
+==== LLM output (reached output limit) ====
+// Tom Hanks出演过的电影里的所有演员里，曾与他们在同一部电影中合作演出过的演员（不包括Tom Hanks）的演员名字以及每个人的参演次数是多少？结果按参演次数倒序排列。
+MATCH (v:Person)-[e:ACTED_IN]->(v1:Movie)<-[r:ACTED_IN]-(v2:Person)
+    WHERE v.name == "Tom
+
+---- query ----
+既参演了Tom Hanks出演过的电影，又参演了Tom Cruise出演过的电影的演员，他们的名字、与Tom Hanks合作的电影的名字、与Tom Cruise合作的电影的名字分别是什么？
+==== LLM output ====
+//既参演了Tom Hanks出演过的电影，又参演了Tom Cruise出演过的电影的演员，他们的名字、与Tom Hanks合作的电影的名字、与Tom Cruise合作的电影的名字分别是什么？
+MATCH (a:Actor)-->(m1:Movie)<--(h:Person {name:"Tom Hanks"})
+MATCH (a:Actor)-->(m2:Movie)<--(c:Person {name:"Tom Cruise"})
+RETURN a.name AS ActorName, m1.title AS TomHanksMovieName, m2.title AS TomCruiseMovieName

@@ -1,0 +1,12 @@
+Who is Tom Hanks?
+What movie is Cloud Atlas?
+List 10 names of persons.
+Please list the titles of movies released between 1990 (inclusive) and 2000 (exclusive).
+What movies has Tom Hanks appeared in?
+Please list the names of the directors of the movie "Cloud Atlas".
+What are the names of the actors who have acted with Tom Hanks in the same movie?
+What are the names of the persons associated with the movie Cloud Atlas and their relationship to the movie?
+What are the different nodes associated with Kevin Bacon within 1 to 4 steps?
+What is the shortest path from Kevin Bacon to Meg Ryan?
+Of all the actors in the movies that Tom Hanks has appeared in, the names of all the actors (excluding Tom Hanks) who have appeared with them in the same movie, and the number of times each has appeared in these movies? Please list the results in reverse order of the number of the times.
+Who have acted in not only a movie that Tom Hanks has acted in but also a movie that Tom Cruise has acted in? Please list their names, the name of the movie he/she co-acted in with Tom Hanks, and the name of the movie he/she co-acted in with Tom Cruise.

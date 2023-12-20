@@ -1,0 +1,8 @@
+gradio
+replicate
+chardet
+accelerate
+bitsandbytes
+requests
+sentencepiece
+torch>=1.12.0
