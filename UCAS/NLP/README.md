@@ -30,6 +30,15 @@ python demo_cmd.py --checkpoint <path_to_model> --lang en
 * --port 仅 web 模式下可用，用于设置 web 服务的侦听端口。
 
 
+<video id="video_cmd" controls="" preload="none" poster="cmd">
+      <source id="video_cmd_s" src="img/cmd.webm" type="video/webm">
+</video>
+
+
+<video id="video_web" controls="" preload="none" poster="web">
+      <source id="video_web_s" src="img/web.webm" type="video/webm">
+</video>
+
 ### 使用的 LLM 
 
 主要使用 [LLaMA2-7B-hf](https://huggingface.co/meta-llama/Llama-2-7b-chat-hf) 进行实验。
