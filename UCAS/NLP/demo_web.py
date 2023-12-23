@@ -41,12 +41,10 @@ if __name__ == "__main__":
     parser.add_argument("--port", type=int, default=7863)
     parser.add_argument("--checkpoint", type=str, default="")
     parser.add_argument("--datapath", type=str, default="data")
-    parser.add_argument("--classifier_url", type=str, default="")
     parser.add_argument("--load_in_8bit", action="store_true")
     args = parser.parse_args()
     checkpoint = args.checkpoint
     data_path = args.datapath
-    classifier_url = args.classifier_url
 
     print("Loading model...")
     tokenizer = LlamaTokenizer.from_pretrained(checkpoint)
