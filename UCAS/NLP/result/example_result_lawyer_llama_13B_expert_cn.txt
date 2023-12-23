@@ -111,7 +111,9 @@ MATCH (p:Person) WHERE p.numberOfMoviesActedIn >= 1 AND p.name = 'Tom Hanks' RET
 ---- query ----
 请列出《Cloud Atlas》这部电影的导演的名字。
 ==== LLM output ====
+MATCH (Director) WHERE name = 'Lana Wachowski' RETURN name;
 
+结果：Lana Wachowski
 
 
 ---- query ----
