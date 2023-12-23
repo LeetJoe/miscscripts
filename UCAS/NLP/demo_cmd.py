@@ -11,11 +11,13 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--checkpoint", type=str, default="")
     parser.add_argument("--datapath", type=str, default="data")
+    parser.add_argument("--lang", type=str, default="cn")
 
     parser.add_argument("--load_in_8bit", action="store_true")
     args = parser.parse_args()
     checkpoint = args.checkpoint
     data_path = args.datapath
+    lang = args.lang
 
     print("Loading model...")
     tokenizer = LlamaTokenizer.from_pretrained(checkpoint)
@@ -40,8 +42,7 @@ if __name__ == "__main__":
             continue
 
         # 构造输入
-        input_text = LLM_ego['en'] + "\n### Schema: " + cypher_schema + "### User: " + current_user_input + "\n### Cypher: "
-        # print(input_text)
+        input_text = LLM_ego[lang] + "\n### Schema: " + cypher_schema + "\n### User:" + current_user_input + "\n### Cypher:"
 
         input_ids = tokenizer(input_text, return_tensors="pt").input_ids.to("cuda")
         outputs = model.generate(input_ids, generation_config=generation_config, max_new_tokens=400, do_sample=False, repetition_penalty=1.1)
