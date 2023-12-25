@@ -37,8 +37,6 @@ python demo_cmd.py --checkpoint <path_to_model> --lang en
 
 用于对比实验的 LLM
 
-* [Chinese-LlaMA2-chat-7B-sft-v0.3](https://huggingface.co/michaelwzhu/Chinese-LlaMA2-chat-7B-sft-v0.3)（[github](https://github.com/michael-wzhu/Chinese-LlaMA2)）；
-
 * [lawyer-llama-13b-beta1.0](https://huggingface.co/pkupie/lawyer-llama-13b-beta1.0)（[github](https://github.com/AndrewZhe/lawyer-llama)）；
 
 * [replicate LLaMA2-70B](https://replicate.com/)；
