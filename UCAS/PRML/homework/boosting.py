@@ -3,16 +3,14 @@
 # @Author  : Barry
 # @File    : mnist_GB.py
 # @Software: PyCharm Community Edition
- 
- 
- 
+
 from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.metrics import accuracy_score
 import tensorflow.examples.tutorials.mnist.input_data as input_data
 import time
 from datetime import datetime
- 
-data_dir = '../MNIST_data/'
+
+data_dir = 'data/'
 mnist = input_data.read_data_sets(data_dir,one_hot=False)
 batch_size = 50000
 batch_x,batch_y = mnist.train.next_batch(batch_size)
