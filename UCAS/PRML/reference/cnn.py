@@ -9,10 +9,10 @@ test_num=10000  # 测试集样本数
 img_dim=(1,28,28)  # 图像维度
 img_size=784  # 28*28的图像
 
-x_train_path= r'data/train-images-idx3-ubyte.gz'
-y_train_path= r'data/train-labels-idx1-ubyte.gz'
-x_test_path= r'data/t10k-images-idx3-ubyte.gz'
-y_test_path= r'data/t10k-labels-idx1-ubyte.gz'
+x_train_path=r'../data/train-images-idx3-ubyte.gz'
+y_train_path=r'../data/train-labels-idx1-ubyte.gz'
+x_test_path=r'../data/t10k-images-idx3-ubyte.gz'
+y_test_path=r'../data/t10k-labels-idx1-ubyte.gz'
 
 def read_image(path):  # 读取图像数据
     with gzip.open(path,'rb') as f:

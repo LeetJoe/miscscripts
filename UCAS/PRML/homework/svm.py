@@ -7,7 +7,6 @@ from sklearn import svm
 from sklearn.model_selection import GridSearchCV
 from sklearn.model_selection import cross_val_score
 
-
 digitals = sk_datasets.load_digits()
 
 X_train, X_test, y_train, y_test = sk_model_selection.train_test_split(digitals.data, digitals.target, train_size=0.8,
