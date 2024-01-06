@@ -1,9 +1,3 @@
-# -*- coding: utf-8 -*-
-# @Time    : 2018/8/21 10:39
-# @Author  : Barry
-# @File    : mnist_AB.py
-# @Software: PyCharm Community Edition
-
 from sklearn.ensemble import AdaBoostClassifier
 from sklearn.metrics import accuracy_score
 import tensorflow.examples.tutorials.mnist.input_data as input_data

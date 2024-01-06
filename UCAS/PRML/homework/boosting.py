@@ -1,9 +1,3 @@
-# -*- coding: utf-8 -*-
-# @Time    : 2018/8/21 10:32
-# @Author  : Barry
-# @File    : mnist_GB.py
-# @Software: PyCharm Community Edition
-
 from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.metrics import accuracy_score
 import tensorflow.examples.tutorials.mnist.input_data as input_data
@@ -20,7 +14,7 @@ test_y = mnist.test.labels[:10000]
 print("start Gradient Boosting")
 StartTime = time.clock()
 
-for i in range(10, 200, 10):
+for i in range(10, 100, 10):
     clf_rf = GradientBoostingClassifier(n_estimators=i)
     clf_rf.fit(batch_x, batch_y)
 
