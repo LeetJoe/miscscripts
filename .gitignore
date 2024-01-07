@@ -5,6 +5,7 @@ __pycache__/
 pyTorch/data/*
 pyTorch/*.pth
 
+sc_*
 colossalChat/test/*
 openai/envvar.py
 */config.py
