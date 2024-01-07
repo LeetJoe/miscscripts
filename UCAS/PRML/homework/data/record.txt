@@ -1,0 +1,211 @@
+
+
+svm:
+(2000, 400)
+Start SVM Training...
+accuracy:  0.8775000000000001
+Total time 15.26 s
+
+
+
+
+
+(4000, 800)
+Start SVM Training...
+accuracy:  0.9175000000000001
+Total time 41.27 s
+
+
+
+
+
+(6000, 1200)
+Start SVM Training...
+accuracy:  0.9283333333333333
+Total time 150.18 s
+
+
+
+
+
+(8000, 1600)
+Start SVM Training...
+accuracy:  0.923125
+Total time 196.83 s
+
+
+
+
+
+(10000, 2000)
+Start SVM Training...
+accuracy:  0.9335000000000001
+Total time 290.56 s
+
+
+
+
+cnn:
+(2000, 400)
+Start CNN Training...
+2024-01-07 12:15:54.600335: I tensorflow/core/platform/cpu_feature_guard.cc:141] Your CPU supports instructions that this TensorFlow binary was not compiled to use: SSE4.1 SSE4.2 AVX AVX2 FMA
+2024-01-07 12:15:54.600821: I tensorflow/core/common_runtime/process_util.cc:71] Creating new thread pool with default inter op setting: 12. Tune using inter_op_parallelism_threads for best performance.
+Epoch 0, accuracy: 0.7025
+Epoch 1, accuracy: 0.8325
+Epoch 2, accuracy: 0.8700
+Epoch 3, accuracy: 0.8950
+Epoch 4, accuracy: 0.9100
+Epoch 5, accuracy: 0.9200
+Epoch 6, accuracy: 0.9250
+Epoch 7, accuracy: 0.9325
+Epoch 8, accuracy: 0.9525
+Total time 369.13 s
+
+
+
+
+
+(4000, 800)
+Start CNN Training...
+2024-01-07 12:07:31.105940: I tensorflow/core/platform/cpu_feature_guard.cc:141] Your CPU supports instructions that this TensorFlow binary was not compiled to use: SSE4.1 SSE4.2 AVX AVX2 FMA
+2024-01-07 12:07:31.106311: I tensorflow/core/common_runtime/process_util.cc:71] Creating new thread pool with default inter op setting: 12. Tune using inter_op_parallelism_threads for best performance.
+Epoch 0, accuracy: 0.7613
+Epoch 1, accuracy: 0.8587
+Epoch 2, accuracy: 0.8863
+Epoch 3, accuracy: 0.8988
+Epoch 4, accuracy: 0.9125
+Epoch 5, accuracy: 0.9175
+Epoch 6, accuracy: 0.9200
+Epoch 7, accuracy: 0.9337
+Epoch 8, accuracy: 0.9375
+Epoch 9, accuracy: 0.9450
+Total time 797.00 s
+
+
+
+
+
+(6000, 1200)
+Start CNN Training...
+2024-01-07 12:17:07.239166: I tensorflow/core/platform/cpu_feature_guard.cc:141] Your CPU supports instructions that this TensorFlow binary was not compiled to use: SSE4.1 SSE4.2 AVX AVX2 FMA
+2024-01-07 12:17:07.239656: I tensorflow/core/common_runtime/process_util.cc:71] Creating new thread pool with default inter op setting: 12. Tune using inter_op_parallelism_threads for best performance.
+Epoch 0, accuracy: 0.8000
+Epoch 1, accuracy: 0.8475
+Epoch 2, accuracy: 0.8992
+Epoch 3, accuracy: 0.9108
+Epoch 4, accuracy: 0.9217
+Epoch 5, accuracy: 0.9275
+Epoch 6, accuracy: 0.9308
+Epoch 7, accuracy: 0.9358
+Epoch 8, accuracy: 0.9417
+Epoch 9, accuracy: 0.9433
+Total time 1188.28 s
+
+
+
+
+
+(8000, 1600)
+Start CNN Training...
+2024-01-07 12:21:59.869526: I tensorflow/core/platform/cpu_feature_guard.cc:141] Your CPU supports instructions that this TensorFlow binary was not compiled to use: SSE4.1 SSE4.2 AVX AVX2 FMA
+2024-01-07 12:21:59.869969: I tensorflow/core/common_runtime/process_util.cc:71] Creating new thread pool with default inter op setting: 12. Tune using inter_op_parallelism_threads for best performance.
+Epoch 0, accuracy: 0.8338
+Epoch 1, accuracy: 0.8850
+Epoch 2, accuracy: 0.8994
+Epoch 3, accuracy: 0.9150
+Epoch 4, accuracy: 0.9206
+Epoch 5, accuracy: 0.9287
+Epoch 6, accuracy: 0.9394
+Epoch 7, accuracy: 0.9400
+Epoch 8, accuracy: 0.9456
+Epoch 9, accuracy: 0.9500
+Total time 1554.01 s
+
+
+
+
+
+
+(10000, 2000)
+Start CNN Training...
+2024-01-07 11:42:06.869782: I tensorflow/core/platform/cpu_feature_guard.cc:141] Your CPU supports instructions that this TensorFlow binary was not compiled to use: SSE4.1 SSE4.2 AVX AVX2 FMA
+2024-01-07 11:42:06.870150: I tensorflow/core/common_runtime/process_util.cc:71] Creating new thread pool with default inter op setting: 12. Tune using inter_op_parallelism_threads for best performance.
+Epoch 0, accuracy: 0.8780
+Epoch 1, accuracy: 0.9035
+Epoch 2, accuracy: 0.9170
+Epoch 3, accuracy: 0.9425
+Epoch 4, accuracy: 0.9460
+Epoch 5, accuracy: 0.9505
+Total time 1201.65 s
+
+
+
+
+
+
+boosting:
+(2000, 400)
+Start Gradient Boosting...
+2024-01-07 12:40:18.405644 n_estimators = 10, accuracy:0.775000
+2024-01-07 12:40:41.634516 n_estimators = 20, accuracy:0.837500
+2024-01-07 12:41:07.551404 n_estimators = 30, accuracy:0.852500
+2024-01-07 12:41:43.579721 n_estimators = 40, accuracy:0.862500
+2024-01-07 12:42:30.824276 n_estimators = 50, accuracy:0.865000
+2024-01-07 12:43:24.391525 n_estimators = 60, accuracy:0.862500
+2024-01-07 12:44:23.344120 n_estimators = 70, accuracy:0.865000
+2024-01-07 12:45:14.330465 n_estimators = 80, accuracy:0.872500
+2024-01-07 12:46:15.518716 n_estimators = 90, accuracy:0.872500
+Total time 367.13 s
+
+
+
+
+
+(4000, 800)
+Start Gradient Boosting...
+2024-01-07 12:08:59.430623 n_estimators = 10, accuracy:0.755000
+2024-01-07 12:09:32.926201 n_estimators = 20, accuracy:0.812500
+2024-01-07 12:10:26.271073 n_estimators = 30, accuracy:0.847500
+2024-01-07 12:11:30.895201 n_estimators = 40, accuracy:0.853750
+2024-01-07 12:13:02.488368 n_estimators = 50, accuracy:0.863750
+2024-01-07 12:14:35.102269 n_estimators = 60, accuracy:0.865000
+2024-01-07 12:17:06.097246 n_estimators = 70, accuracy:0.872500
+2024-01-07 12:20:16.801430 n_estimators = 80, accuracy:0.877500
+2024-01-07 12:23:27.592992 n_estimators = 90, accuracy:0.883750
+Total time 832.65 s
+
+
+
+
+
+(6000, 1200)
+Start Gradient Boosting...
+n_estimators = 10, accuracy:0.778333
+n_estimators = 20, accuracy:0.825833
+n_estimators = 30, accuracy:0.848333
+n_estimators = 40, accuracy:0.862500
+n_estimators = 50, accuracy:0.872500
+n_estimators = 60, accuracy:0.879167
+n_estimators = 70, accuracy:0.882500
+n_estimators = 80, accuracy:0.887500
+n_estimators = 90, accuracy:0.887500
+Total time 1232.20 s
+
+
+
+
+(8000, 1600)
+
+
+
+
+
+
+(10000, 2000)
+
+
+
+
+
+
+

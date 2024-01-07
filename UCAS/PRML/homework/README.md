@@ -38,6 +38,7 @@ conda install numpy
 
 ## 训练结果
 
+原始实验记录见 [record.txt](data/record.txt)
 
 <table>
 	<tr>
