@@ -33,19 +33,19 @@ conda install numpy
 
 由于计算资源有限，我从 [MINIST](http://yann.lecun.com/exdb/mnist/) 中截取了不超过 10000 条训练数据和不超过 2000 条测试数据，并没有使用全部的数据。
 
-为了对比这三种训练方法的性能，我设置了不同的训练规模的数据，来对比它们在训练时间和训练结果上的差异。
+为了对比这三种训练方法的性能，我设置了不同的训练规模的数据，来对比它们在训练时间和正确率上的差异。
 
 
 ## 训练结果
 
-原始实验记录见 [record.txt](data/record.txt)
+原始实验记录见 [record.txt](data/record.txt)。
 
 <table>
 	<tr>
 		<th rowspan="2">训练集</th><th rowspan="2">测试集</th><th colspan="2">SVM</th><th colspan="2">Boosting</th><th colspan="2">CNN</th>
 	</tr>
 	<tr>
-		<td>time(s)</td><td>acc</td><td>time(s)</td><td>acc</td><td>time(s)</td><td>acc</td>
+		<th>time(s)</th><th>acc</th><th>time(s)</th><th>acc</th><th>time(s)</th><th>acc</th>
 	</tr>
 	<tr>
 		<td style="text-align:right">2000</td><td style="text-align:right">400</td>
@@ -62,7 +62,7 @@ conda install numpy
 	<tr>
 		<td style="text-align:right">6000</td><td style="text-align:right">1200</td>
 		<td style="text-align:right">150.18</td><td style="text-align:right">0.9283</td>
-		<td style="text-align:right"></td><td style="text-align:right"></td>
+		<td style="text-align:right">1232.20</td><td style="text-align:right">0.8875</td>
 		<td style="text-align:right; color:orange;">1188.28</td><td style="text-align:right">0.9433</td>
 	</tr>
 	<tr>
@@ -83,6 +83,8 @@ conda install numpy
 ## 结果分析
 
 由于 CNN 利用了多核运行，其并发数设置为 12，实际运行并发在 10 左右，所以其运行时间应乘以 10 才近似等于其实际运行时间。
+
+由于计算资源有限，为避免训练时间过长，我设置了当在测试集上的正确率超过 95% 或达到指定 epochs 时就停止训练，在此条件下比较不同训练方法、训练规模在训练时间和训练正确率上的差异。
 
 从结果来看：
 * CNN 在测试集上正确率最高，而且在不同规模的数据集上结果都比较稳定；
