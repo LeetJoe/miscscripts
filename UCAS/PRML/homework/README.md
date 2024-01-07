@@ -1,6 +1,9 @@
 ## 机器学习与模型识别实践作业
 
+本作业 github 地址：[https://github.com/LeetJoe/miscscripts/tree/main/UCAS/PRML/homework](https://github.com/LeetJoe/miscscripts/tree/main/UCAS/PRML/homework)
+
 选题：手写数字识别
+
 选用方法：SVM、Gradient Boosting 和 CNN
 
 
