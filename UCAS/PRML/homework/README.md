@@ -68,13 +68,13 @@ conda install numpy
 	<tr>
 		<td style="text-align:right">8000</td><td style="text-align:right">1600</td>
 		<td style="text-align:right">196.83</td><td style="text-align:right">0.9231</td>
-		<td style="text-align:right"></td><td style="text-align:right"></td>
+		<td style="text-align:right">1749.66</td><td style="text-align:right">0.8925</td>
 		<td style="text-align:right; color:orange;">1554.01</td><td style="text-align:right">0.9500</td>
 	</tr>
 	<tr>
 		<td style="text-align:right">10000</td><td style="text-align:right">2000</td>
 		<td style="text-align:right">290.56</td><td style="text-align:right">0.9335</td>
-		<td style="text-align:right"></td><td style="text-align:right"></td>
+		<td style="text-align:right">2181.36</td><td style="text-align:right">0.8905</td>
 		<td style="text-align:right; color:orange;">1201.65</td><td style="text-align:right">0.9505</td>
 	</tr>
 </table>
@@ -82,14 +82,14 @@ conda install numpy
 
 ## 结果分析
 
-由于 CNN 利用了多核运行，其并发数设置为 12，实际运行并发在 10 左右，所以其运行时间应乘以 10 才近似等于其实际运行时间。
+由于计算资源有限，为避免训练时间过长，我设置了当在测试集上的正确率超过 0.95 或达到指定 epochs 时就停止训练，在此条件下比较不同训练方法、训练规模在训练时间和训练正确率上的差异。
 
-由于计算资源有限，为避免训练时间过长，我设置了当在测试集上的正确率超过 95% 或达到指定 epochs 时就停止训练，在此条件下比较不同训练方法、训练规模在训练时间和训练正确率上的差异。
+其中 SVM 和 Boosting 算法采用单核 CPU 执行，系统记录的时间就是现实世界中流逝的时间；CNN 算法由于利用了多核，表格里记录的时间实际上是 CPU 时间，现实世界中流逝的时间约是这个时间的 1/10。
 
 从结果来看：
 * CNN 在测试集上正确率最高，而且在不同规模的数据集上结果都比较稳定；
 * SVM 在测试集上正确率没有 CNN 高但是仍然优于 Boosting；在训练速度上有很大的优势；
-* Boosting 没有使用并行计算，训练速度不如 SVM 但是也比 CNN 快很多；不过测试集上正确率在三者之中是最低的。
+* Boosting 在测试集上正确率比 SVM 还要低，训练速度与 CNN 相当但是更慢。
 
 
 

@@ -195,6 +195,17 @@ Total time 1232.20 s
 
 
 (8000, 1600)
+Start Gradient Boosting...
+n_estimators = 10, accuracy:0.780000
+n_estimators = 20, accuracy:0.820000
+n_estimators = 30, accuracy:0.843750
+n_estimators = 40, accuracy:0.860625
+n_estimators = 50, accuracy:0.870625
+n_estimators = 60, accuracy:0.877500
+n_estimators = 70, accuracy:0.885625
+n_estimators = 80, accuracy:0.885000
+n_estimators = 90, accuracy:0.892500
+Total time 1749.66 s
 
 
 
@@ -202,7 +213,17 @@ Total time 1232.20 s
 
 
 (10000, 2000)
-
+Start Gradient Boosting...
+n_estimators = 10, accuracy:0.776000
+n_estimators = 20, accuracy:0.824500
+n_estimators = 30, accuracy:0.848500
+n_estimators = 40, accuracy:0.864000
+n_estimators = 50, accuracy:0.876000
+n_estimators = 60, accuracy:0.884000
+n_estimators = 70, accuracy:0.888000
+n_estimators = 80, accuracy:0.888000
+n_estimators = 90, accuracy:0.890500
+Total time 2181.36 s
 
 
 
