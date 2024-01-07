@@ -4,7 +4,7 @@ import time
 from datetime import datetime
 from utils import load_mnist
 
-data_path = '../data/'
+data_path = 'data/'
 (batch_x, batch_y), (test_x, test_y) = load_mnist(data_path, normalize=True)
 stop_acc = 0.95
 
@@ -17,7 +17,7 @@ for i in range(10, 100, 10):
 
     y_pred_rf = clf_rf.predict(test_x)
     acc_rf = accuracy_score(test_y, y_pred_rf)
-    print("%s n_estimators = %d, accuracy:%f" % (datetime.now(), i, acc_rf))
+    print("n_estimators = %d, accuracy:%f" % (i, acc_rf))
     if acc_rf > stop_acc:
         break
 

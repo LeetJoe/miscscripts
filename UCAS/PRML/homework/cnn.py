@@ -4,7 +4,7 @@ import time
 from utils import load_mnist, generatebatch
 
 
-data_path = '../data/'
+data_path = 'data/'
 (x_train, y_train), (x_test, y_test) = load_mnist(data_path, normalize=True, one_hot=True)
 
 # 创建占位符
@@ -70,13 +70,11 @@ with tf.Session() as sess:
     sess.run(tf.global_variables_initializer())
     for epoch in range(10):
         bnum = 0
-        for batch_xs, batch_ys in generatebatch(x_train, y_train, 10000, 50):
+        for batch_xs, batch_ys in generatebatch(x_train, y_train, len(x_train), 50):
             sess.run(train_step, feed_dict={x: batch_xs, y: batch_ys, keep_prob: 0.5})
         if epoch % 1 == 0:
-            epoch_acc = sess.run(accuracy, feed_dict={x: x_test[:2000], y: y_test[:2000], keep_prob: 1.0})
+            epoch_acc = sess.run(accuracy, feed_dict={x: x_test, y: y_test, keep_prob: 1.0})
             print("Epoch {}, accuracy: {:.4f}".format(epoch, epoch_acc))
-            # print(sess.run(y_conv[:10], feed_dict={x: batch_xs, y: batch_ys, keep_prob: 1.0}))
-            # print(sess.run(y[:10], feed_dict={x: batch_xs, y: batch_ys, keep_prob: 1.0}))
 
             if epoch_acc > stop_acc:
                 break

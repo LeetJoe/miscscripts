@@ -69,6 +69,7 @@ def load_mnist(data_path, normalize=True, one_hot=False, train_num=10000, test_n
         for key in ('train', 'test'):
             label[key] = one_hot_label(label[key])
 
+    print("train num: {}, test num: {}".format(train_num, test_num))
     return (image['train'][:train_num], label['train'][:train_num]), (image['test'][:test_num], label['test'][:test_num])
 
 

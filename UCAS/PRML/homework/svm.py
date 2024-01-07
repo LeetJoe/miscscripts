@@ -5,7 +5,7 @@ from sklearn.model_selection import cross_val_score
 from utils import load_mnist
 
 
-data_path = '../data/'
+data_path = 'data/'
 (x_train, y_train), (x_test, y_test) = load_mnist(data_path, normalize=True)
 
 stop_acc = 0.95
