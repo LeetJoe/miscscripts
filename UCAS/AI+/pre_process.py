@@ -2,11 +2,15 @@ import os
 import pandas as pd
 import numpy as np
 
-data_path = '../data'
-save_path = '../newdata'
+data_path = 'data'
+save_path = 'newdata'
+result_path = 'result'
 
 if not os.path.exists(save_path):
     os.makedirs(save_path)
+
+if not os.path.exists(result_path):
+    os.makedirs(result_path)
 
 train_data = pd.read_csv(os.path.join(data_path, 'dataTrain.csv'))
 test_data = pd.read_csv(os.path.join(data_path, 'dataB.csv'))
@@ -66,3 +70,4 @@ label = label[:50000]
 pd.DataFrame(data=train).to_csv(os.path.join(save_path, 'dataTrain.csv'), index=False)
 pd.DataFrame(data=test).to_csv(os.path.join(save_path, 'dataB.csv'), index=False)
 pd.DataFrame(data=label).to_csv(os.path.join(save_path, 'label.csv'), index=False)
+pd.DataFrame(data=submission).to_csv(os.path.join(result_path, 'submission.csv'), index=False)
