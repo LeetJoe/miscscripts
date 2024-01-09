@@ -1,0 +1,8 @@
+# python==3.6.13
+jupyter
+scikit-learn
+catboost
+xgboost
+lightgbm
+tqdm
+matplotlib
