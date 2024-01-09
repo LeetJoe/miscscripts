@@ -1,5 +1,7 @@
+import os
 import numpy as np
 import pandas as pd
+from sklearn.experimental import enable_hist_gradient_boosting
 from sklearn.preprocessing import LabelEncoder
 from sklearn.linear_model import LogisticRegression
 from xgboost import XGBClassifier
@@ -14,66 +16,7 @@ from sklearn.model_selection import train_test_split
 import warnings
 from tqdm import tqdm
 warnings.filterwarnings('ignore')
-train_data = pd.read_csv('data/dataTrain.csv')
-test_data = pd.read_csv('data/dataB.csv')
-submission = pd.read_csv('data/submit_example_B.csv')
-data_nolabel = pd.read_csv('data/dataNoLabel.csv')
-# f1 f2 f4 f5 f6位置类特征 f3 f7-f43互联网类特征 f43-46 通话类特征
-print(train_data.head(2))
-print(test_data.head(2))
-print(train_data.shape)
-print(test_data.shape)
-train_data['f47'] = train_data['f1'] * 10 + train_data['f2']
-test_data['f47'] = test_data['f1'] * 10 + test_data['f2']
-train_data['f3'] = train_data['f3'].map({'low': 0, 'mid': 1, 'high': 2})
-test_data['f3'] = test_data['f3'].map({'low': 0, 'mid': 1, 'high': 2})
-print(train_data.head(2))
-print(test_data.head(2))
-# 暴力Feature 位置
-loc_f = ['f1', 'f2', 'f4', 'f5', 'f6']
-for df in [train_data, test_data]:
-    for i in range(len(loc_f)):
-        for j in range(i + 1, len(loc_f)):
-            df[f'{loc_f[i]}+{loc_f[j]}'] = df[loc_f[i]] + df[loc_f[j]]
-            df[f'{loc_f[i]}-{loc_f[j]}'] = df[loc_f[i]] - df[loc_f[j]]
-            df[f'{loc_f[i]}*{loc_f[j]}'] = df[loc_f[i]] * df[loc_f[j]]
-            df[f'{loc_f[i]}/{loc_f[j]}'] = df[loc_f[i]] / (df[loc_f[j]]+1)
 
-# 暴力Feature 通话
-com_f = ['f43', 'f44', 'f45', 'f46']
-for df in [train_data, test_data]:
-    for i in range(len(com_f)):
-        for j in range(i + 1, len(com_f)):
-            df[f'{com_f[i]}+{com_f[j]}'] = df[com_f[i]] + df[com_f[j]]
-            df[f'{com_f[i]}-{com_f[j]}'] = df[com_f[i]] - df[com_f[j]]
-            df[f'{com_f[i]}*{com_f[j]}'] = df[com_f[i]] * df[com_f[j]]
-            df[f'{com_f[i]}/{com_f[j]}'] = df[com_f[i]] / (df[com_f[j]]+1)
-print(train_data.head(2))
-print(test_data.head(2))
-# 离散化
-all_f = [f'f{idx}' for idx in range(1, 47) if idx != 3]
-for df in [train_data, test_data]:
-    for col in all_f:
-        df[f'{col}_log'] = df[col].apply(lambda x: int(np.log(x)) if x > 0 else 0)
-# 特征交叉
-log_f = [f'f{idx}_log' for idx in range(1, 47) if idx != 3]
-for df in [train_data, test_data]:
-    for i in range(len(log_f)):
-        for j in range(i + 1, len(log_f)):
-            df[f'{log_f[i]}_{log_f[j]}'] = df[log_f[i]]*10000 + df[log_f[j]]
-print(train_data.head(2))
-print(test_data.head(2))
-cat_columns = ['f3']
-num_columns = [ col for col in train_data.columns if col not in ['id', 'label', 'f3']]
-feature_columns = num_columns + cat_columns
-target = 'label'
-
-train = train_data[feature_columns]
-label = train_data[target]
-test = test_data[feature_columns]
-print(train.head(2))
-print(test.head(2))
-print(label.head(2))
 def model_train(model, model_name, kfold=5):
     oof_preds = np.zeros((train.shape[0]))
     test_preds = np.zeros(test.shape[0])
@@ -93,9 +36,7 @@ def model_train(model, model_name, kfold=5):
         test_preds += test_fold_preds.ravel()
     print("Overall Model = %s, AUC = %.4f" % (model_name, roc_auc_score(label, oof_preds)))
     return test_preds / kfold
-#去除干扰数据
-train = train[:50000]
-label = label[:50000]
+
 gbc = GradientBoostingClassifier(
     n_estimators=50,
     learning_rate=0.1,
@@ -145,6 +86,16 @@ clf = StackingClassifier(
     estimators=estimators,
     final_estimator=LogisticRegression()
 )
+
+data_path = 'newdata'
+result_path = 'result'
+train = pd.read_csv(os.path.join(data_path, 'dataTrain.csv'))
+test = pd.read_csv(os.path.join(data_path, 'dataB.csv'))
+label = pd.read_csv(os.path.join(data_path, 'label.csv'))
+submission = pd.read_csv(os.path.join(data_path, 'submit_example_B.csv'))
+
+feature_columns = [ col for col in train.columns ]
+
 X_train, X_test, y_train, y_test = train_test_split(
     train, label, stratify=label, random_state=2023)
 clf.fit(X_train, y_train)
@@ -169,4 +120,4 @@ test = test[ff]
 clf_test_preds = model_train(clf, "StackingClassifier", 10)
 
 submission['label'] = clf_test_preds
-submission.to_csv('submission.csv', index=False)
+submission.to_csv(os.path.join(result_path, 'submission.csv'), index=False)

@@ -4,7 +4,7 @@ import time
 import os
 import numpy as np
 import data_utils as dus
-from elm import GenELMClassifier
+from elm import GenELMClassifier, GenELMRegressor
 from random_layer import MLPRandomLayer
 
 
@@ -24,11 +24,36 @@ def pred_save(model, col_clip, in_file, out_file):
         fo.close()
 
 data_path = '../newdata'
+act_func = 'sigmoid'  # fixed, the best
+hn = 6000
+
+sig_rl = MLPRandomLayer(n_hidden=hn, activation_func=act_func)
+clf = GenELMRegressor(hidden_layer=sig_rl)
+
+X_train = np.loadtxt(os.path.join(data_path, 'dataTrain.csv'),dtype=np.float64,delimiter=',',unpack=False)
+y_train = np.loadtxt(os.path.join(data_path, 'label.csv'),dtype=np.float64,delimiter=',',unpack=False)
+X_test = np.loadtxt(os.path.join(data_path, 'dataB.csv'),dtype=np.float64,delimiter=',',unpack=False)
+
+
+
+print('Start training with {} hidden nodes...'.format(hn))
+s_time = time.time()
+clf.fit(X_train, y_train)
+score = np.round(clf.score(X_train, y_train) * 100, 2)
+
+y_test = clf.predict(X_test)
+print(y_test[:10])
+c_time = np.round(time.time() - s_time, 2)
+
+
+
+exit()
+
+
 ps_thresh = 0.01  # pearson rate & spearman rate threshold
 ol_percent = 0.1  # outlier percentage: we predict there were 10% noise data randomly mixed in the train data
 ol_no_label = False  # use no label data for outliers
 ol_nl_type = 0  # how to use no labeled data: 0-full, 1-pre 34000, 2-beyond 34000
-act_func = 'sigmoid'  # fixed, the best
 auc_train = 50000  # train data filter use auc
 
 do_predict = True
