@@ -29,3 +29,25 @@ pip install -r requirements.txt
 2. 上述步骤同时会将 data/submit_example_B.csv 复制一份到 result/submission.csv 中，用于保存预测结果；
 3. 执行 `python ai_homework.py` 进行训练及预测，结果保存在 result/submission.csv 文件中；
 
+## 训练结果
+
+训练输出：
+
+> auc = 0.90942848
+> Model = StackingClassifier
+>
+> - KFold = 0, val_auc = 0.9073
+> - KFold = 1, val_auc = 0.9092
+> - KFold = 2, val_auc = 0.9153
+> - KFold = 3, val_auc = 0.9053
+> - KFold = 4, val_auc = 0.9059 
+>
+> - KFold = 5, val_auc = 0.9085
+> - KFold = 6, val_auc = 0.9006
+> - KFold = 7, val_auc = 0.9173
+> - KFold = 8, val_auc = 0.9155
+> - KFold = 9, val_auc = 0.9133
+> Overall Model = StackingClassifier, AUC = 0.9097
+
+平台验证：
+![result](result.png)
