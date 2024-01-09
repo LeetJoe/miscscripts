@@ -1,4 +1,4 @@
-import os
+import os, datetime
 import numpy as np
 import pandas as pd
 from sklearn.experimental import enable_hist_gradient_boosting
@@ -31,7 +31,7 @@ def model_train(model, model_name, kfold=5):
         y_pred = model.predict_proba(x_test)[:,1]
         oof_preds[test_index] = y_pred.ravel()
         auc = roc_auc_score(y_test,y_pred)
-        print("- KFold = %d, val_auc = %.4f" % (k, auc))
+        print("%s - KFold = %d, val_auc = %.4f" % (datetime.now(), k, auc))
         test_fold_preds = model.predict_proba(test)[:, 1]
         test_preds += test_fold_preds.ravel()
     print("Overall Model = %s, AUC = %.4f" % (model_name, roc_auc_score(label, oof_preds)))
