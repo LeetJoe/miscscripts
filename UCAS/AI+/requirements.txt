@@ -5,3 +5,4 @@ catboost
 xgboost
 lightgbm
 tqdm
+matplotlib
