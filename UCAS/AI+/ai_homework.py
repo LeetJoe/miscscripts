@@ -92,7 +92,7 @@ result_path = 'result'
 train = pd.read_csv(os.path.join(data_path, 'dataTrain.csv'))
 test = pd.read_csv(os.path.join(data_path, 'dataB.csv'))
 label = pd.read_csv(os.path.join(data_path, 'label.csv'))
-submission = pd.read_csv(os.path.join(data_path, 'submit_example_B.csv'))
+submission = pd.read_csv(os.path.join(result_path, 'submission.csv'))
 
 feature_columns = [ col for col in train.columns ]
 
