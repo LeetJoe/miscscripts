@@ -3,7 +3,7 @@
 
 ## 说明
 
-我们探索了ELM与集成学习两种学习方法，最终集成学习方法取得的结果更好一些，因此我们选择使用集成学习的结果，并将 ELM 学习的代码放在这里供参考。
+使用集成学习方法完成建模，最终平台评分 0.8990。
 
 文件及目录：
 * data：原始数据；
@@ -28,6 +28,8 @@ pip install -r requirements.txt
 1. 首先执行 `python pre_process.py` 进行特征变换，生成新的 dataB.csv、dataTrain.csv以及 label.csv 保存在 newdata 目录中；
 2. 上述步骤同时会将 data/submit_example_B.csv 复制一份到 result/submission.csv 中，用于保存预测结果；
 3. 执行 `python ai_homework.py` 进行训练及预测，结果保存在 result/submission.csv 文件中；
+
+(notebook 在代码根目录执行 `jupyter notebook` 即可）
 
 ## 训练结果
 
