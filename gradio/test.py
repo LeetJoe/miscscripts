@@ -47,7 +47,8 @@ demo = gr.Interface(
     inputs=[
         gr.Files(show_label=True, label="请选择文件(仅支持doc/docx/pdf格式，允许多选)", file_types=["file", ".doc", ".docs", ".pdf"]),
         gr.Radio([("文本", 1), ("图片", 2), ("文本+图片", 3)], value=1, label="提取内容")],
-    outputs=["text"]
+    outputs=["text"],
+    title="知识抽取"
 )
 
 demo.launch()
