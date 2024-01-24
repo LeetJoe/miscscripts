@@ -1,24 +1,21 @@
 import gradio as gr
-import numpy as np
-
-def greet(name, intensity):
-    return "Hello " * int(intensity) + name + "!"
 
 
-def sepia(input_img):
-    sepia_filter = np.array([
-        [0.393, 0.769, 0.189],
-        [0.349, 0.686, 0.168],
-        [0.272, 0.534, 0.131]
-    ])
-    sepia_img = input_img.dot(sepia_filter.T)
-    sepia_img /= sepia_img.max()
-    return sepia_img
+ext_allowd = ['doc', 'docx', 'pdf']
 
 
-def file(file):
-    print(file)
-    return ''
+def file(filelist, type):
+    result = ''
+    for file in filelist:
+        if ext_check(file):
+            result += file + ", "
+    return result + str(type)
+
+
+def ext_check(file_name):
+    file_extension = file_name.split(".")[-1]
+    return file_extension in ext_allowd
+
 
 # gr.Image() 作为输入时，在 fn 那里接收到的是一个 shape=(height, width, 3) 的 NumPy 类型的数组
 # demo = gr.Interface(sepia, gr.Image(), "image")
@@ -39,7 +36,9 @@ demo = gr.Interface(
 
 demo = gr.Interface(
     fn=file,
-    inputs=["file"],
+    inputs=[
+        gr.Files(show_label=True, label="请选择文件(仅支持doc/docx/pdf格式，允许多选)", file_types=["file", ".doc", ".docs", ".pdf"]),
+        gr.Radio([("文本", 1), ("图片", 2), ("文本+图片", 3)], value=1, label="提取内容")],
     outputs=["text"]
 )
 
