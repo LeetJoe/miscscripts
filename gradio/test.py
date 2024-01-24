@@ -10,14 +10,14 @@ def file(filelist, type):
         if ext_check(file):
             file_allowed.append(file)
     if type == 1:
-        #  提取文本
-        return "提取文本"
+        #  todo 提取文本
+        return "输出返回结果：提取文本成功/失败"
     elif type == 2:
-        #  提取图片
-        return "提取图片"
+        #  todo 提取图片
+        return "输出返回结果：提取图片成功/失败"
     else:
-        #  提取文本+图片
-        return "提取文本+图片"
+        #  todo 提取文本+图片
+        return "输出返回结果：提取文本+图片成功/失败"
 
 
 def ext_check(file_name):
