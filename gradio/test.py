@@ -5,11 +5,19 @@ ext_allowd = ['doc', 'docx', 'pdf']
 
 
 def file(filelist, type):
-    result = ''
+    file_allowed = []
     for file in filelist:
         if ext_check(file):
-            result += file + ", "
-    return result + str(type)
+            file_allowed.append(file)
+    if type == 1:
+        #  提取文本
+        return "提取文本"
+    elif type == 2:
+        #  提取图片
+        return "提取图片"
+    else:
+        #  提取文本+图片
+        return "提取文本+图片"
 
 
 def ext_check(file_name):
