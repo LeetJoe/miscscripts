@@ -4,20 +4,26 @@ import gradio as gr
 ext_allowd = ['doc', 'docx', 'pdf']
 
 
-def file(filelist, type):
+def file(filelist, type, html, btn):
     file_allowed = []
     for file in filelist:
         if ext_check(file):
             file_allowed.append(file)
+
+    html = (
+        "<div style='max-width:100%; max-height:360px; overflow:auto'>"
+        + "<a href='https://www.baidu.com' target='_blank'>这是一个动态变化的超链接！</a>"
+        + "</div>"
+    )
     if type == 1:
         #  todo 提取文本
-        return "输出返回结果：提取文本成功/失败"
+        return "输出返回结果：提取文本成功/失败", html
     elif type == 2:
         #  todo 提取图片
-        return "输出返回结果：提取图片成功/失败"
+        return "输出返回结果：提取图片成功/失败", html
     else:
         #  todo 提取文本+图片
-        return "输出返回结果：提取文本+图片成功/失败"
+        return "输出返回结果：提取文本+图片成功/失败", html
 
 
 def ext_check(file_name):
@@ -25,29 +31,15 @@ def ext_check(file_name):
     return file_extension in ext_allowd
 
 
-# gr.Image() 作为输入时，在 fn 那里接收到的是一个 shape=(height, width, 3) 的 NumPy 类型的数组
-# demo = gr.Interface(sepia, gr.Image(), "image")
-
-# 定义了多个 gr.Interface 的实例的时候，只有第一个会正常工作，其余的执行了 launch() 也没用
-'''
-demo = gr.Interface(
-    fn=greet,
-    inputs=["text", gr.Slider(step=1, value=2, minimum=1, maximum=10)],
-    outputs=[gr.Textbox(label="greeting", lines=3)],
-    title="Simple gradio",
-    description="Repeat some Hello's to you",
-    article="something text or markdown"
-)
-'''
-
-# gr.Radio(['a', 'b', 'c'])  # 它的 label 同时也是它的 value
-
 demo = gr.Interface(
     fn=file,
     inputs=[
         gr.Files(show_label=True, label="请选择文件(仅支持doc/docx/pdf格式，允许多选)", file_types=["file", ".doc", ".docs", ".pdf"]),
-        gr.Radio([("文本", 1), ("图片", 2), ("文本+图片", 3)], value=1, label="提取内容")],
-    outputs=["text"],
+        gr.Radio([("文本", 1), ("图片", 2), ("文本+图片", 3)], value=1, label="提取内容"),
+        gr.HTML('<a href="https://www.baidu.com">这是一个HTML超链接！</a>'),
+        gr.Button(link='https://www.baidu.com', value="这是一个Button超链接！")
+    ],
+    outputs=["text", "html"],
     title="知识抽取"
 )
 
