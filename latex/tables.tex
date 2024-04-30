@@ -1,0 +1,97 @@
+\documentclass{article}
+
+% if you need to pass options to natbib, use, e.g.:
+%     \PassOptionsToPackage{numbers, compress}{natbib}
+% before loading neurips_2019
+
+\PassOptionsToPackage{numbers}{natbib}
+
+% ready for submission
+
+% to compile a preprint version, e.g., for submission to arXiv, add add the
+% [preprint] option:
+%     \usepackage[preprint]{neurips_2019}
+
+% to compile a camera-ready version, add the [final] option, e.g.:
+%     \usepackage[final]{neurips_2019}
+
+% to avoid loading the natbib package, add option nonatbib:
+%     \usepackage[nonatbib]{neurips_2019}
+
+\usepackage[utf8]{inputenc} % allow utf-8 input
+\usepackage[T1]{fontenc}    % use 8-bit T1 fonts
+\usepackage{booktabs}       % professional-quality tables
+\usepackage{microtype}      % microtypography
+
+\usepackage{subfigure}
+\usepackage{multirow}
+\usepackage{boldline}
+\usepackage{cellspace}
+\usepackage{color,verbatim}
+\usepackage[tableposition=top]{caption}
+\usepackage{hyperref}
+\usepackage{enumitem}
+%\usepackage{graphics}
+\usepackage{amssymb}
+\usepackage{floatrow}
+\usepackage{colortbl}
+
+%\usepackage{subfig}
+\usepackage{graphicx}
+\usepackage{floatrow}
+
+\usepackage{xcolor}
+
+\usepackage{floatrow}
+\newfloatcommand{capbtabbox}{table}[][\FBwidth]
+
+\usepackage{blindtext}
+\floatsetup[table]{capposition=top}
+
+
+\usepackage{array}
+\newcolumntype{L}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\newcolumntype{C}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\newcolumntype{R}[1]{>{\raggedleft\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+
+
+\title{Beautifule Tables}
+
+\begin{document}
+	
+	\maketitle
+	
+	\begin{table}[bht]
+		\caption{Comparison of result in the paper and what we get. H@K is in \%.}
+		\label{tab::results-kge}
+		\begin{center}
+			\scalebox{0.75}
+			{
+				\begin{tabular}{c c |c c c c c | c c c c c}\hline
+					\multirow{2}{*}{\textbf{KGE Method}}	& \multirow{2}{*}{\textbf{}} & \multicolumn{5}{c|}{\textbf{FB15k}} & \multicolumn{5}{c}{\textbf{WN18RR}}	\\
+					& & \textbf{MR} & \textbf{MRR} & \textbf{H@1} & \textbf{H@3} & \textbf{H@10} & \textbf{MR} & \textbf{MRR} & \textbf{H@1} & \textbf{H@3} & \textbf{H@10} \\ 
+					\hline
+					& in paper & 33 & 0.792 & 71.4 & 85.7 & 90.1 & 3436 & 0.230 & 1.5 & 41.1 & 53.1 \\
+					\rowcolor{green!60}  % 结合下一行看，如果把行合并写在上面，对不合并的行设置 rowcolor 
+													% 会把合并行的内容挡住；写成下面的形式，合并行的内容结构上归属
+													% 下面这行，对本行设置 rowcolor 就不会遮挡其内容。
+					\multirow{-2}{*}{\textbf{TransE}}  % 这里的负号表示向上合并两行，对列也有类似处理
+					& we get & 36 & 0.792 & 74.5 & 82.2 & 87.5 & 3481 & 0.438 & 39.6 & 44.0 & 53.2 \\
+					\hline
+					& in paper & 40 & 0.791 & 73.1 & 83.2 & 89.5 & 4902 & 0.442 & 39.8 & 45.5 & 53.5 \\
+					\rowcolor{green!20}
+					\multirow{-2}{*}{\textbf{DistMult}} 
+					& we get & 36 & 0.743 & 67.7 & 78.1 & 86.4 & 4612 & 0.443 & 40.1 & 45.4 & 53.5 \\
+					\hline
+					& in paper & 39 & 0.776 & 70.6 & 81.7 & 88.5 & 5266 & 0.471 & 43.0 & 49.2 & 55.7 \\
+					\rowcolor{green}
+					\multirow{-2}{*}{\textbf{ComplEx}} 
+					& we get & 40 & 0.765 & 70.7 & 79.9 & 87.2 & 5214 & 0.468 & 42.8 & 48.2 & 54.8 \\
+					\hline
+				\end{tabular}
+			}
+		\end{center}
+		\vspace{-0.15cm}
+	\end{table}
+
+\end{document}
