@@ -17,22 +17,32 @@
 % \clearpage
 \setcounter{page}{1}
 \begin{abstract}
-自知识图谱（Knowledge Graph, KG）的概念提出以来，各大企业、机构纷纷利用知识图谱构建了庞大的知识库（Knowledge Base, KB）。但是由于知识库的不完备性，如何利用已有知识预测缺失的知识，从而完善知识库这个问题被提了出来，进而出现了知识图完备（Knowledge Graph Completion, KGC）相关的研究。然而现实世界中的知识往往不是一成不变的，于是近年来又出现了带时间信息的知识库（Temporal Knowledge Base, TKB），以及相应的时序知识图完备[2]（Temporal Knowledge Graph Completion, TKGC，或称时序知识图推理[7] Temporal Knowledge Graph Reasoning，TKGR）相关的研究。本文通过调研目前主流的研究方法与分类方式，选择了我们认为具有代表性的三个框架 TLogic, MPNet, ECEformer 来介绍当前 TKGC 的最新进展。
+自知识图谱（Knowledge Graph, KG）的概念提出以来，各大企业、机构纷纷利用知识图谱构建了庞大的知识库（Knowledge Base, KB）。但是由于知识库的不完备性，如何利用已有知识预测缺失的知识，从而完善知识库这个问题被提了出来，进而出现了知识图完备（Knowledge Graph Completion, KGC）相关的研究。然而现实世界中的知识往往不是一成不变的，于是近年来又出现了带时间信息的知识库（Temporal Knowledge Base, TKB），以及相应的时序知识图完备\cite{2023survey}（Temporal Knowledge Graph Completion, TKGC，或称时序知识图推理\cite{7-2021} Temporal Knowledge Graph Reasoning，TKGR）相关的研究。本文通过调研目前主流的研究方法与分类方式，选择了我们认为具有代表性的三个框架 TLogic, MPNet, ECEformer 来介绍当前 TKGC 的最新进展。
 \end{abstract}
 \keywords{文献综述；时序马尔可夫逻辑网络；时序知识图谱；时序知识图完备；时序知识图推理}
 
 \section{简介}
 
-在马尔可夫逻辑网络（Markov Logic Network, MLN）出现之前，符号主义者们提出一阶谓词逻辑（First Order Logic）来对知识进行表示和推理，但是它不具备处理不确定性的能力；另一种方法是概率图模型（Probabilistic Graphical Model），它引入概率来处理不确定性，但是在知识的表示和推理方面存在不足。MLN 的出现将两者结合在一起，它为一阶知识库里的每个公式（formula）赋予权重，这个权重可以通过迭代优化学习得到，然后再使用马尔可夫链-蒙特卡罗方法（Markov Chain Monte Carlo，MCMC）就可以实现对具体请求的推理\cite{marzano2007rainfall}。MLN 的出现极大地推动了相关研究的发展，包括知识图谱概念的提出[8]，并且对很多后续方法起到了奠基作用。
+在马尔可夫逻辑网络（Markov Logic Network, MLN）出现之前，符号主义者们提出一阶谓词逻辑（First Order Logic）来对知识进行表示和推理，但是它不具备处理不确定性的能力；另一种方法是概率图模型（Probabilistic Graphical Model），它引入概率来处理不确定性，但是在知识的表示和推理方面存在不足。MLN 的出现将两者结合在一起，它为一阶知识库里的每个公式（formula）赋予权重，这个权重可以通过迭代优化学习得到，然后再使用马尔可夫链-蒙特卡罗方法\cite{20-1996}（Markov Chain Monte Carlo，MCMC）就可以实现对具体请求的推理\cite{2006mln}。MLN 的出现极大地推动了相关研究的发展，包括知识图谱概念的提出\cite{8-2024}，并且对很多后续方法起到了奠基作用。
 
-然而 MLN 所表达的世界有一个严重的缺陷——它所描述的世界是静态的，现实世界中很多知识却都是有时效的，比如“美国的总统是拜登”在某些年份里可能是对的，在其它时间里就是错的。在解决静态 KGC 问题中，尝试通过利用知识库中的事实规则进行推理的方法被称为基于规则的方法，到了 TKGC 问题中，将这些规则与时间信息相结合也可以取得良好的效果，其中一些方法尝试通过先学习一些静态规则，然后再为其赋予时间特征，如 StreamLearner[11]；另一种思路是通过随机游走的方法加上时间约束，以此来得到包含时序信息的规则，进而进行推理。使用随机游走的方法中，TLogic[3]是第一个直接从 TKG 中学习时序规则并将其应用于推理中的方法，我将在后文中展开介绍此方法。
-随着人工神经网络的发展，除了使用基于规则的，人工神经网络（Neural Network）也被用来进行 TKGC 的研究，并取得了良好的效果。其中，把知识图中的实体和关系表示为词嵌入形式，然后将时间信息按照先后顺序、或者作为属性放入人工神经网络中训练，最后使用训练得到的模型对给定的查询进行推理，这类方法被称为知识图嵌入（Knowledge Graph Embedding，KGE）方法，如 DArtNet[5]。另外还有基于强化学习的方法，如MPNet[4]。还有使用 encoder-decoder 架构分别获得 TKG 的全局与局部特征然后将它们用于链路预测的RE-Net[12]，使用 attention 机制实现的ECEformer[6]。
+然而 MLN 所表达的世界有一个严重的缺陷——它所描述的世界是静态的，现实世界中很多知识却都是有时效的，比如“美国的总统是拜登”在某些年份里可能是对的，在其它时间里就是错的。在解决静态 KGC 问题中，尝试通过利用知识库中的事实规则进行推理的方法被称为基于规则的方法，到了 TKGC 问题中，将这些规则与时间信息相结合也可以取得良好的效果，其中一些方法尝试通过先学习一些静态规则，然后再为其赋予时间特征，如 StreamLearner\cite{11-2019}；另一种思路是通过随机游走的方法加上时间约束，以此来得到包含时序信息的规则，进而进行推理。使用随机游走的方法中，TLogic\cite{3-2022}是第一个直接从 TKG 中学习时序规则并将其应用于推理中的方法，我将在后文中展开介绍此方法。
+随着人工神经网络的发展，除了使用基于规则的，人工神经网络（Neural Network）也被用来进行 TKGC 的研究，并取得了良好的效果。其中，把知识图中的实体和关系表示为词嵌入形式，然后将时间信息按照先后顺序、或者作为属性放入人工神经网络中训练，最后使用训练得到的模型对给定的查询进行推理，这类方法被称为知识图嵌入（Knowledge Graph Embedding，KGE）方法，如 DArtNet\cite{5-2020}，ComplEx\cite{21-2016}。另外还有基于强化学习的方法，如MPNet\cite{4-2024}。还有使用 encoder-decoder 架构分别获得 TKG 的全局与局部特征然后将它们用于链路预测的RE-Net\cite{12-2020}，使用 attention 机制实现的ECEformer\cite{6-2024}。
+
+
+
+\begin{figure}
+	\captionsetup{width=0.8\textwidth}
+	\centering
+	\includegraphics[width=0.5\textwidth]{figures/TKG.png}
+	\caption{时序知识图谱实例，取自 ICEWS14 的一个子图，其中 Angela Merkel, Barack Obama, France 和 China 是实体，时间以 yy/mm/dd 的形式表示。蓝色的虚线构成查询 (Angela Merkel, consult, ?, 2014/08/09) 的答案。\cite{3-2022}}
+\end{figure}
+
 
 
 从分类上看，目前用于 TKGC 的方法可以从两个维度进行分类：
-第一种分类方式通过算法所属的机器学习方法阵营进行分类，可分为符号主义型方法、联结主义型方法和行为主义型方法。符号主义侧重于从 TKG 中找到可信的规则，然后应用这些规则进行时序推理，其优点是可以发掘图中的固有逻辑信息，而且具有可读可解释性，这类方法占比不多，但效果不俗，其中比较有代表性的是 TLogic，它通过随机游走的方式从时序知识图中探索规则，然后将规则应用于查询对象，结合历史事实对缺失实体进行预测。由于人工神经网络近年来大放光彩，多数方法还是基于人工神经网络的方法，属于联结主义阵营。这类方法使用循环神经网络RNN来学习时序知识图的时序信息，使用图神经网络GNN来学习时序图中的结构信息。这类方法可以单独使用RNN，如 DArtNet[5] 和 RE-Net[12]，或者使用 RNN 的同时再结合 GNN，如 RE-GCN[14]。在各类机器学习任务中取得良好效果的 Transformer 也有在此方面的应用，如 ECEformer[6]。而行为主义型方法主要是基于强化学习的方法，如 MPNet[4]。
+第一种分类方式通过算法所属的机器学习方法阵营进行分类，可分为符号主义型方法、联结主义型方法和行为主义型方法。符号主义侧重于从 TKG 中找到可信的规则，然后应用这些规则进行时序推理，其优点是可以发掘图中的固有逻辑信息，而且具有可读可解释性，这类方法占比不多，但效果不俗，其中比较有代表性的是 TLogic，它通过随机游走的方式从时序知识图中探索规则，然后将规则应用于查询对象，结合历史事实对缺失实体进行预测。由于人工神经网络近年来大放光彩，多数方法还是基于人工神经网络的方法，属于联结主义阵营。这类方法使用循环神经网络RNN来学习时序知识图的时序信息，使用图神经网络GNN来学习时序图中的结构信息。这类方法可以单独使用RNN，如 DArtNet\cite{5-2020} 和 RE-Net\cite{12-2020}，或者使用 RNN 的同时再结合 GNN，如 RE-GCN\cite{7-2021}。在各类机器学习任务中取得良好效果的 Transformer 也有在此方面的应用，如 ECEformer\cite{6-2024}。而行为主义型方法主要是基于强化学习的方法，如 MPNet\cite{4-2024}。
 另一种分类方法着眼于方法对 TKG 中信息挖掘的侧重点，分为“内插法”与“外推法”两类。简单而言，内插法预测的时间范围不会超过训练集自身的时间范围，而外推法则会对发生在训练集时间范围之外的事件进行预测。从本质上来说，内插法侧重于用地图或几何的方法探索图中的结构与语义信息，而外推法则重在针对具体的查询从历史事件中寻找答案。
-基于内推法的方法有 BoxE[15], TransE[16], DyERNIE[17]等；外推法有 CluSTeR[18], DREAM[19], MetaTKGR[20] 等。上文提到的 TLogic 与 ECEformer 也属于这类方法。由于 Transformer 在各类问题中的出色表现，也有学者将基于 Transformer 的算法与内插法、外推法并列单独归作一类[6]。
+基于内推法的方法有 BoxE\cite{14-2020}, TransE\cite{15-2024}, DyERNIE\cite{16-2020}等；外推法有 CluSTeR\cite{17-2021}, DREAM\cite{18-2023}, MetaTKGR\cite{13-2022} 等。上文提到的 TLogic 与 ECEformer 也属于这类方法。由于 Transformer 在各类问题中的出色表现，也有学者将基于 Transformer 的算法与内插法、外推法并列单独归作一类[6]。
 由于外推法比内插法更具挑战，而且内插法需要关注的问题，外推法同样需要关注，因此本文重点关注外推类方法。在此前提下，本文选择了符号主义阵营的 TLogic 、行为主义阵营的 MP-Net 和联结主义阵营的 ECEformer 为例进行展开。
 
 
@@ -40,7 +50,7 @@
 
 \subsection{评估方法}
 
-要比较不同方法间的异同与优缺点，需要使用相同的评估标准，其中被广泛使用的是平均倒序排名 MMR 和 $\text{hits}@k$，其中 $k\in\{1,3,10\}$。对于 rank $x\in{\mathbb N}$，倒序排名定义为 $1\over x$，而 MMR 就是所有查询中命中候选的倒序排名的均值，显然 MMR 越接近 1 越好。而 $\text{hits}@k$ 的计算方式则是对所有 $x\le k$ 的查询数量在整个查询集合中的占比。 在文中列出的所有 TKGC 方法中，我们使用在 icews14[13] 数据集上的表现来进行比较。
+要比较不同方法间的异同与优缺点，需要使用相同的评估标准，其中被广泛使用的是平均倒序排名 MMR 和 $\text{hits}@k$，其中 $k\in\{1,3,10\}$。对于 rank $x\in{\mathbb N}$，倒序排名定义为 $1\over x$，而 MMR 就是所有查询中命中候选的倒序排名的均值，显然 MMR 越接近 1 越好。而 $\text{hits}@k$ 的计算方式则是对所有 $x\le k$ 的查询数量在整个查询集合中的占比。 在文中列出的所有 TKGC 方法中，我们使用在 icews14\footnote{https://www.andybeger.com/icews/articles/icews-event-data.html} 数据集上的表现来进行比较。
 
 \subsection{形式化表达}
 
@@ -50,6 +60,7 @@ TKG 表达为 ${\mathcal G}=({\mathcal E},{\mathcal R},{\mathcal T},{\mathcal Q}
 
 
 \section{基于规则的方法：TLogic}
+
 
 \subsection{简介}
 
@@ -141,12 +152,33 @@ TLogic 文章中认为，基于词嵌入的方法，虽然可以把词嵌入视�
 TLogic在实验中的表现如下：
 
 
-
-
-
+\begin{table}[htbp]
+	\centering
+	\caption{TLogic 在 icews14 上的表现}
+	\begin{tabular}{cccc}
+		\toprule  % 顶部线
+		MMR&Hit@1&Hit@3&Hit@10 \\ 
+		\midrule  % 中部线
+		0.4304&0.3356&0.4827&0.6123 \\
+		\bottomrule  % 底部线
+	\end{tabular}
+\end{table}
 
 
 \section{基于强化学习的方法：MP-Net}
+
+
+
+
+
+\begin{figure}
+	\captionsetup{width=0.85\textwidth}
+	\centering
+	\includegraphics[width=1.0\textwidth]{figures/MPNet.png}
+	\caption{MPNet 的整体框架结构，其 SERP、DRP和DEP 三种策略网络使用各自的LSTM模块分别记录之前动作的静态信息、动态实体信息和动态关系信息\cite{4-2024}。}
+\end{figure}
+
+
 
 \subsection{简介}
 
@@ -271,6 +303,17 @@ MP-Net 在实验中的表现如下：
 
 
 
+\begin{table}[htbp]
+	\centering
+	\caption{MP-Net 在 icews14 上的表现}
+	\begin{tabular}{cccc}
+		\toprule  % 顶部线
+		MMR&Hit@1&Hit@3&Hit@10 \\ 
+		\midrule  % 中部线
+		0.4376&0.3485&0.4823&0.6061 \\
+		\bottomrule  % 底部线
+	\end{tabular}
+\end{table}
 
 
 
@@ -278,6 +321,18 @@ MP-Net 在实验中的表现如下：
 
 
 \section{基于 Transformer 的方法：ECEformer}
+
+
+
+\begin{figure}
+	\captionsetup{width=0.85\textwidth}
+	\centering
+	\includegraphics[width=1.0\textwidth]{figures/ECEformer.png}
+	\caption{ECEformer 的整体结构\cite{6-2024}。ECER 和 MCKR 是其核心组件。}
+	\label{fig:enter-label}
+\end{figure}
+
+
 
 \subsection{简介}
 
@@ -351,6 +406,25 @@ p(e_{gt}|q)=Softmax(Sim(\mathcal{U}_{ECE},\mathcal{E}))
 \subsection{实验结果}
 
 ECEformer 在实验中的表现如下：
+
+
+
+
+\begin{table}[htbp]
+	\centering
+	\caption{MP-Net 在 icews14 上的表现}
+	\begin{tabular}{cccc}
+		\toprule  % 顶部线
+		MMR&Hit@1&Hit@3&Hit@10 \\ 
+		\midrule  % 中部线
+		0.7170&0.6731&0.7360&0.8030 \\
+		\bottomrule  % 底部线
+	\end{tabular}
+\end{table}
+
+
+
+
 
 
 \section{总结}
