@@ -6,6 +6,7 @@ pyzmq>=25.1.1
 scipy>=1.7.3
 tornado>=6.3.3
 jupyter>=1.0.0
+seaborn
 
 # 上面的环境适用于python=3.10.13，后面这三个好像都不必要
 # jupyter 的安装可能需要特殊的步骤，可以先查一下
