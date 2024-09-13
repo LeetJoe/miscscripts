@@ -14,11 +14,11 @@ def main():
 
     # 标准正态分布采样，均值 0 方差 1，注意得到的每个采样并非在 [-1, 1] 而是均值附近的任何值，绝对值可以大于1
     np.random.seed(42)
-    data1 = np.random.randn(200)
+    data1 = np.abs(np.random.randn(200))
     np.random.seed(24)
-    data2 = np.random.randn(200)
+    data2 = np.abs(np.random.randn(200))
     np.random.seed(66)
-    data3 = np.random.randn(200)
+    data3 = np.abs(np.random.randn(200))
 
     # x 可以输入单个一维数组，也可以是多个一维数组，借助 color/alpha 参数进行颜色区分；使用 label 进行标签；
     # density 为 True 时，纵坐标是分个方块中数量在总数量中的占比；为 False 时，纵坐标就是数量；
@@ -34,7 +34,8 @@ def main():
     # stacked 仅对 histtype=bar/step 有效，histtype=bar 的时候，两个参数一同作用的效果与 histtype=barstacked 效果相同；对 step 类型效果类似。
     plt.hist([data1, data2, data3], histtype="bar", alpha=0.45, bins=20,
              label=["data1", "data2", "data3"], color=["#348ABD", "#ff00ff", "#ffff00"], rwidth=0.8)
-    plt.xlim(-3, 3)
+    plt.xlim(0, 1)
+    plt.xticks([np.round(i/10 + 0.1, 2) for i in range(10)], [np.round(i/100 + 0.01, 2) for i in range(10)])
     plt.legend()
     plt.show()
 
