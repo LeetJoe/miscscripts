@@ -68,6 +68,7 @@ coverage.xml
 .hypothesis/
 .pytest_cache/
 cover/
+pyTorch/BookPyTorch2/chapter2/img/*.jpg
 
 # Translations
 *.mo
