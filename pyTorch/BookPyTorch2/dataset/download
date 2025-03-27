@@ -1,0 +1,15 @@
+
+本书配套的大数据集，可以直接到百度深度学习平台
+https://aistudio.baidu.com/datasetoverview
+这个网址查找数据集名称，并下载，速度非常快。
+
+
+本书使用到的数据集放这个目录，下载地址如下：
+
+cifar-10-batches-py，https://aistudio.baidu.com/datasetdetail/46154
+lfw，https://aistudio.baidu.com/datasetdetail/13110
+minist，https://aistudio.baidu.com/datasetdetail/7670
+SpeechCommands， https://aistudio.baidu.com/datasetdetail/229759
+
+
+

@@ -20,6 +20,7 @@ esearch/csvmappings.py
 # C extensions
 *.so
 *.pth
+*.npy
 
 # Distribution / packaging
 .DS_Store
