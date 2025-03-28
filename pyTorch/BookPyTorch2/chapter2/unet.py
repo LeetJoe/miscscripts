@@ -38,6 +38,7 @@ class Unet(torch.nn.Module):
     def forward(self,img_tensor):
         image = img_tensor
 
+        # todo 注意对比与 chapter 3 中的 nn 在实现上的差别。这里是多个 Sequential 实例，注释里似乎称此为“模块”
         image = self.first_block_down(image)#;print(image.shape)     # torch.Size([5, 32, 14, 14])
         image = self.second_block_down(image)#;print(image.shape)    # torch.Size([5, 16, 7, 7])
         image = self.latent_space_block(image)#;print(image.shape)   # torch.Size([5, 8, 7, 7])
