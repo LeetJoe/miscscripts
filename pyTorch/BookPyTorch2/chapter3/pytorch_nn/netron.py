@@ -31,3 +31,4 @@ if __name__ == "__main__":
     model = NeuralNetwork()
     model = model.to(device)                #将计算模型传入GPU硬件等待计算
     torch.save(model, './model.pth')
+    # print(model)
