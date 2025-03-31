@@ -2,7 +2,8 @@
 
 import pickle
 
-
+# todo 这里的 model 封装到了更高一级的层次，Layer 比较直观，Net 充当了经典意义上的 model，
+#  而这里的 Model 则侧重完成 loss 计算、优化器管理、save&load 等事务性的操作。
 class Model:
 
     def __init__(self, net, loss, optimizer):

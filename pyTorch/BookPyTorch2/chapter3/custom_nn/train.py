@@ -1,6 +1,8 @@
 import numpy as np
 
 
+# todo 各种不同类型的神经网络如 LSTM，RNN 等都是在 Layer 里定义的，外层的 Net, Model 主要
+#   起组织作用。可见经过良好封装之后，train 部分的代码可以非常简洁。
 def get_one_hot(targets, nb_classes=10):
     return np.eye(nb_classes)[np.array(targets).reshape(-1)]
 
