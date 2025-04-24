@@ -55,7 +55,7 @@ for epoch in range(epochs):
         y_batch = torch.tensor(y_batch).float().to(device)
 
 
-        # todo model() 返回的不是 label，而是新的 img
+        # todo model() 返回的不是 label，而是新的 img，而非分类结果
         pred = model(x_imgs_batch)                      #对模型进行正向计算
         loss = torch.nn.MSELoss(reduction="sum")(pred, y_batch)*100.   #使用损失函数进行计算
 

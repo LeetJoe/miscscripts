@@ -4,6 +4,7 @@ import torch
 import numpy as np
 from tqdm import tqdm
 from netron import NeuralNetwork
+import matplotlib.pyplot as plt
 
 
 batch_size = 320                        #设定每次训练的批次数
@@ -23,6 +24,12 @@ optimizer = torch.optim.Adam(model.parameters(), lr=2e-5)   #设定优化函数
 x_train = np.load("../../dataset/mnist/x_train.npy")
 y_train_label = np.load("../../dataset/mnist/y_train_label.npy")
 
+# print(x_train[3].shape)
+#
+# plt.imshow(x_train[3])
+# plt.axis('off')  # 不显示坐标轴
+# plt.show()
+
 train_num = len(x_train)//batch_size
 
 #开始计算
@@ -37,11 +44,16 @@ for epoch in range(epochs):
         train_batch = torch.tensor(x_train[start:end]).to(device)
         label_batch = torch.tensor(y_train_label[start:end]).to(device)
 
+        # todo 这步其实就前向传播
         pred = model(train_batch)
+        # todo 损失计算
         loss = loss_fu(pred,label_batch)
 
+        # todo 这步的目的是将梯度清零，重新累加梯度
         optimizer.zero_grad()
+        # todo 反向传播，这里会累加梯度
         loss.backward()
+        # todo 使用现在的梯度，对模型参数进行更新
         optimizer.step()
 
         train_loss += loss.item()  # 记录每个批次的损失值
