@@ -14,9 +14,9 @@ def sigmod_derivate(x):
     return x * (1 - x)
 class BPNeuralNetwork:
     def __init__(self):
-        self.input_n = 0
-        self.hidden_n = 0
-        self.output_n = 0
+        self.input_n = 0  # 输入维度
+        self.hidden_n = 0  # 隐藏层维度，只有一个 hidden layer
+        self.output_n = 0  # 输出维度
         self.input_cells = []
         self.hidden_cells = []
         self.output_cells = []
@@ -31,14 +31,16 @@ class BPNeuralNetwork:
         self.output_cells = [1.0] * self.output_n
         self.input_weights = make_matrix(self.input_n,self.hidden_n)
         self.output_weights = make_matrix(self.hidden_n,self.output_n)
-        # random activate
+        # random activate，随机初始化 weight
         for i in range(self.input_n):
             for h in range(self.hidden_n):
                 self.input_weights[i][h] = rand(-0.2, 0.2)
         for h in range(self.hidden_n):
             for o in range(self.output_n):
                 self.output_weights[h][o] = rand(-2.0, 2.0)
-    def predict(self,inputs):
+
+    # todo 在推理的时候才需要前向传播
+    def predict(self,inputs):  # forward propagation
         for i in range(self.input_n - 1):
             self.input_cells[i] = inputs[i]
         for j in range(self.hidden_n):
@@ -75,9 +77,10 @@ class BPNeuralNetwork:
             for j in range(self.hidden_n):
                 self.input_weights[i][j] += learn * hidden_deltas[j] * self.input_cells[i]
         error = 0
-        for o in range(len(label)):
+        for o in range(len(label)): # todo mse error
             error += 0.5 * (label[o] - self.output_cells[o]) ** 2
         return error
+    # todo 训练过程从随机初始化的权重开始，直接进行反向传播，不需要前向传播过程
     def train(self,cases,labels,limit = 100,learn = 0.05):
         for i in range(limit):
             error = 0
@@ -96,6 +99,8 @@ class BPNeuralNetwork:
         labels = [[0], [1], [1], [0]]
         self.setup(2, 5, 1)
         self.train(cases, labels, 10000, 0.05)
+
+        # todo 执行预测（推理），期望结果应该接近于 labels 里的值
         for case in cases:
             print(self.predict(case))
 if __name__ == '__main__':
