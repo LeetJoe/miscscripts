@@ -5,6 +5,11 @@
 \begin{document}
 	
 	
+
+
+
+
+
 	\begin{tikzpicture}
 		\begin{axis}
 			[
@@ -15,9 +20,10 @@
 			ymin=0,
 			xmin=-0.5,
 			xmax=2.5,
+			x tick label style={/pgf/number format/precision=10},
 			nodes near coords={\pgfmathprintnumber{\pgfkeysvalueof{/data point/y}}},
 			]
-			\addplot 
+			\addplot
 			table                               % 绘制原始数据的折线图
 			{           		                % X，Y的原始数据
 				X Y
@@ -26,6 +32,43 @@
 				2 218
 			};
 		\end{axis}
+	\end{tikzpicture}
+
+
+	\begin{tikzpicture}
+	\begin{axis}
+		[
+		legend pos=outer north east,  % 将图例放在图外，位于图的东北角
+		xlabel=iteration of EM,
+		title=Result of Experiment(MRR),
+		ymax=0.72,
+		ymin=0.69,
+		xmin=-0.5,
+		xmax=4.5,
+		%设置 y 坐标标注数字格式
+		y tick label style={
+			/pgf/number format/fixed zerofill,
+			/pgf/number format/precision=2
+		},
+		nodes near coords={\pgfmathprintnumber{\pgfkeysvalueof{/data point/y}}},
+		% 设置曲线注数字格式
+		every node near coord/.append style={
+			/pgf/number format/fixed zerofill,
+			/pgf/number format/precision=4
+		},
+		]
+		\addplot
+		table                               % 绘制原始数据的折线图
+		{           		                % X，Y的原始数据
+			X Y
+			0 0.6945787738806041
+			1 0.7036995624772716
+			2 0.7090021908599651
+			3 0.7119454740505421
+			4 0.7133672543999674
+		};
+		\addlegendentry{MRR}          % 给第一个图像添加图例
+	\end{axis}
 	\end{tikzpicture}
 	
 	
