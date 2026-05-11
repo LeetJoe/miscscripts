@@ -129,4 +129,60 @@
 
 
 
+\begin{figure}[htbp]
+	\centering
+	\begin{minipage}{0.24\textwidth}
+		\centering
+		\begin{tikzpicture}
+			\begin{axis}[
+				xmin=-0.5, xmax=5.5,
+				ymin=0.697, ymax=0.723,
+				axis lines=left,
+				xmajorgrids=true,
+				ymajorgrids=true,
+				grid style={dashed},
+				width=3in,
+				height=2in,
+				]
+				\addplot[blue, mark=*] coordinates {
+					(0, 0.6988438881047587)
+					(1, 0.7140488498503678)
+					(2, 0.7161419674672248)
+					(3, 0.7166623096886564)
+					(4, 0.7179786348444682)
+					(5, 0.7184642948730695)
+				};
+			\end{axis}
+		\end{tikzpicture}
+	\end{minipage}
+	\hfill
+	\begin{minipage}{0.24\textwidth}
+		\centering
+		\begin{tikzpicture}
+			\begin{axis}[
+				xmin=-0.5, xmax=5.5,
+				ymin=0.773, ymax=0.798,
+				axis lines=left,
+				xmajorgrids=true,
+				ymajorgrids=true,
+				grid style={dashed},
+				width=3in,
+				height=2in,
+				]
+				\addplot[blue, mark=*] coordinates {
+					(0, 0.7743002152856375)
+					(1, 0.7902326970581159)
+					(2, 0.7912230574378458)
+					(3, 0.7936997031491299)
+					(4, 0.793597613618529)
+					(5, 0.7940875571401176)
+				};
+			\end{axis}
+		\end{tikzpicture}
+	\end{minipage}
+	\caption{MRR by iterations on ICEWS14 (left) and ICEWS05-15 (right).}
+	\label{EM_Fig1}
+\end{figure}
+
+
 \end{document}

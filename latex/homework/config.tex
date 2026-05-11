@@ -9,6 +9,7 @@
 \usepackage[justification=centering]{caption}
 \usepackage[bookmarks=true,colorlinks=true,linkcolor=magenta,citecolor=blue,urlcolor=magenta]{hyperref}
 \usepackage{booktabs}
+\usepackage{authblk}
 \usepackage{blindtext}
 \usepackage{calc} % 用于使用宽度和长度的计算
 
@@ -92,37 +93,4 @@
 
 % titlepage
 \usepackage{titling}
-% 重置命令 maketitle
-\renewcommand{\maketitle}{
-	\def\titlelength{8em}
- 	\begin{titlepage}
-		\begin{center}
-			\vspace*{2em}
-            {\sihao \hei 中国科学院大学人工智能学院《文献阅读》课程—文献综述报告}\\
-            \vspace*{-0.5em}
-            \rule{\textwidth}{0.5pt}\\
-			\vspace*{3em}
-			{\sihao \hei \bfseries 课程编号:}
-            {\sihao \courseID}\\
-			\vspace*{11em}
-			{\yihao \hei \bfseries \thetitle}
-
-			\vspace*{9em}
-			{\sanhao \hei
-				\renewcommand\arraystretch{1.5}
-				\begin{tabular}{ll}
-					\makebox[4em][r]{{\bfseries 撰写人：}} &
-					\makebox[\titlelength][l]{\theauthor} \\
-					\makebox[4em][r]{{\bfseries 学号：}} &
-					\makebox[\titlelength][l]{\studentID} \\
-					\makebox[4em][r]{{\bfseries 培养单位：}} &
-					\makebox[\titlelength][l]{\organization} \\
-			  \end{tabular}
-		    }
-
-			\vspace{4em}
-			{\sanhao \bfseries \thedate}
-		\end{center}
-	\end{titlepage}
-}
 

@@ -2,13 +2,16 @@
 \documentclass[a4paper, AutoFakeBold]{article}
 \usepackage{graphicx}
 \input{config}
-\newcommand{\mytitle}{时序知识图推理方法研究}
-\title{\mytitle}
-\author{宋超}
-\def\courseID{180206081104P3012H-01}
-\def\studentID{202328020629002}
-\def\organization{中国科学院自动化研究所}
-\date{\today}
+
+
+
+% \newcommand{\mytitle}{时序知识图推理方法研究}
+% \title{时序知识图推理方法研究}
+% \author{宋超}
+% \def\courseID{180206081104P3012H-01}
+% \def\studentID{202328020629002}
+% \def\organization{中国科学院自动化研究所}
+% \date{\today}
 
 
 
@@ -48,10 +51,9 @@
 
 \begin{document}
 
-\maketitle
+\title{时序知识图推理方法研究}
 
-% \clearpage
-\setcounter{page}{1}
+
 \begin{abstract}
 自知识图谱（Knowledge Graph, KG）的概念提出以来，各大企业、机构纷纷利用知识图谱构建了庞大的知识库（Knowledge Base, KB）。但是由于知识库的不完备性，如何利用已有知识预测缺失的知识，从而完善知识库这个问题被提了出来，进而出现了知识图完备（Knowledge Graph Completion, KGC）相关的研究。然而现实世界中的知识往往不是一成不变的，于是近年来又出现了带时间信息的知识库（Temporal Knowledge Base, TKB），以及相应的时序知识图完备\cite{2023survey}（Temporal Knowledge Graph Completion, TKGC，或称时序知识图推理\cite{7-2021} Temporal Knowledge Graph Reasoning，TKGR）相关的研究。本文通过调研目前主流的研究方法与分类方式，选择了我们认为具有代表性的三个框架 TLogic, MPNet, ECEformer 来介绍当前 TKGC 的最新进展。
 \end{abstract}
