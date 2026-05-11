@@ -39,7 +39,7 @@
 
 ### matplotlib
 
-matplotlib 相关，主要是与 PyMC 进行统计分析的方法
+matplotlib 相关;
 
 
 ### UCAS

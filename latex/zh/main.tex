@@ -1,0 +1,180 @@
+% compiler: XeLaTeX
+\documentclass[a4paper, AutoFakeBold]{article}
+\usepackage{graphicx}
+\input{config}
+\newcommand{\mytitle}{时序知识图推理方法研究}
+\title{\mytitle}
+\author{宋超}
+\def\courseID{180206081104P3012H-01}
+\def\studentID{202328020629002}
+\def\organization{中国科学院自动化研究所}
+\date{\today}
+
+
+
+
+
+% ====================
+% show blue for the specific references whose marker has a substring "RefBlue"
+% This section should be put together with other "\usepackage", and xcolor, xparse, etoolbox are needed
+% Note: for all the markers of used references, only use the letter or number: \cite{36_942} would cause some errors
+% usage: \cite{RefBlueMyRef1} or \cite{MyRef2RefBlue}
+\usepackage{xparse}
+\usepackage{etoolbox}
+\usepackage{xcolor}
+\usepackage{algorithmic}
+\usepackage{algorithm}
+\usepackage{array}
+\usepackage[caption=false,font=normalsize,labelfont=sf,textfont=sf]{subfig}
+\usepackage{textcomp}
+\usepackage{stfloats}
+\usepackage{url}
+\usepackage{verbatim}
+\usepackage{graphicx}
+\usepackage{cite}
+\usepackage{booktabs}
+\usepackage{multirow}
+\ExplSyntaxOn
+\NewDocumentCommand{\instringTF}{mmmm}
+{\oleks_instring:nnnn { #1 } { #2 } { #3 } { #4 }}
+\tl_new:N \l__oleks_instring_test_tl
+\cs_new_protected:Nn \oleks_instring:nnnn
+{
+	\tl_set:Nn \l__oleks_instring_test_tl { #1 }
+	\regex_match:nnTF { \u{l__oleks_instring_test_tl} } { #2 } { #3 } { #4 }
+}
+\ExplSyntaxOff
+\let\mybibitem\bibitem
+\renewcommand{\bibitem}[1]{%
+	\instringTF{RefBlue}{#1}
+	{\color{blue}\mybibitem{#1}}
+	{\color{black}\mybibitem{#1}}%
+}
+% ====================
+
+
+
+
+
+
+
+\begin{document}
+
+\maketitle
+
+% \clearpage
+\setcounter{page}{1}
+
+
+\begin{algorithm}[!t]
+	\caption{隐藏事件生成}\label{alg_heg}
+	\textbf{Input:}\\
+	\hspace*{2em}Weighted temporal logical rules $\mathcal{R}$;\\
+	\hspace*{2em}True events $\mathcal{O}$, Time set $\mathcal{T}$ of $\mathcal{O}$;\\
+	\textbf{Output:}\\
+	\hspace*{2em}Hidden events $\mathcal{H}$;
+	\vspace{0.3em}
+	\hrule
+	\vspace{0.3em}
+	\begin{algorithmic}[1]
+		\STATE $\mathcal{C}\leftarrow\emptyset$;
+		\FOR{$r\in \mathcal{R}$}
+		\STATE $r_b=(p_0, p_1,\dots,p_{l-1}), p_h$ are body and head of $r$;
+		\FOR{$p_i\in r_b$}
+		\STATE $\mathcal{O}_{p_i}=\{\epsilon|\epsilon=(e_s,p,e_o,\tau)\in \mathcal{O},p=p_i\}$;
+		\FOR{$\epsilon\in \mathcal{O}_{p_i}$}
+		\STATE Construct path along $p_i$ with $\epsilon$ following time constraints, and record the min time of the last hop as $\tau_{min}$;
+		\ENDFOR
+		\ENDFOR
+		\STATE With any complete body path with length $l$, use the head and tail entity of it and $p_h$ to construct a static triplet $(e_0,p_h,e_{l})$, then put it together with $\tau_{min}$ into set $\mathcal{C}$;
+		\ENDFOR
+		\STATE $\mathcal{C}_T\leftarrow\emptyset$;
+		\FOR{$c=(e_s,p,e_o),\tau_{min}\in C$}
+		\FOR{$\tau_i>\tau_{min}$ and $\tau_i\in\mathcal{T}$}
+		\STATE Combine $c$ with $\tau_i$ to form a candidate hidden event $\epsilon=(e_s,p,e_o,\tau_i)$;
+		\STATE Score $\epsilon$;
+		\STATE Put $\epsilon$ with its score into $\mathcal{C}_T$;
+		\ENDFOR
+		\ENDFOR
+		\STATE Sort $\mathcal{C}_T$ reversely by score and choose the top $N$ as $\mathcal{H}$.
+	\end{algorithmic}
+\end{algorithm}
+
+
+\begin{table}[!t]
+	\caption{数据集统计概况}
+	\label{tab1}
+	\centering
+	\begin{tabular}{@{\hspace{0pt}}c|c@{\hspace{10pt}}c@{\hspace{10pt}}c@{\hspace{10pt}}c@{\hspace{10pt}}c@{\hspace{10pt}}c} % Adjust 'ccc' for the number of columns and alignment (l, c, r)
+		\toprule % Top line from booktabs package
+		Dataset&$|\mathcal{E}|$&$|\mathcal{P}|$&$|\mathcal{T}|$&$N_{\text{train}}$&$N_{\text{valid}}$&$N_{\text{test}}$ \\
+		\midrule % Line below headers from booktabs package
+		ICEWS14&7,128&230&365&72,826&8,941&8,963 \\
+		ICEWS05-15&10,488&251&4,017&368,962&46,275&46,092 \\
+		ICEWS18&23,033&256&304&373,018&45,995&49,545 \\
+		\bottomrule % Bottom line from booktabs package
+	\end{tabular}
+\end{table}
+
+
+\begin{table}[!t]
+	\caption{实验结果}
+	\label{tab2}
+	\centering
+	\begin{tabular}{c|c|cccc} % Adjust 'ccc' for the number of columns and alignment (l, c, r)
+		\toprule % Top line from booktabs package
+		Dataset&Model&MRR&hits@1&hits@3&hits@10 \\
+		\midrule % Line below headers from booktabs package
+		\multirow{3}{*}{ICEWS14} & MLN & 0.3731 & 0.2782 & 0.4247 & 0.5462 \\
+		& KGE & \underline{0.6938} & \underline{0.6508} & \underline{0.7140} & \underline{0.7744} \\
+		& EM & \textbf{0.7193} & \textbf{0.6821} & \textbf{0.7359} & \textbf{0.7905} \\
+		\midrule % Line below headers from booktabs package
+		\multirow{3}{*}{ICEWS05-15} & MLN & 0.4338 & 0.3214 & 0.4973 & 0.6442 \\
+		& KGE & \underline{0.7601} & \underline{0.7088} & \underline{0.7885} & \underline{0.8541} \\
+		& EM & \textbf{0.7741} & \textbf{0.7318} & \textbf{0.7982} & \textbf{0.8544} \\
+		\midrule % Line below headers from booktabs package
+		\multirow{3}{*}{ICEWS18} & MLN & 0.2197 & 0.1340 & 0.2491 & 0.3904 \\
+		& KGE & \underline{0.4431} & \underline{0.3833} & \underline{0.4688} & \underline{0.5510} \\
+		& EM & \textbf{0.4499} & \textbf{0.3927} & \textbf{0.4768} & \textbf{0.5584} \\
+		\bottomrule % Bottom line from booktabs package
+	\end{tabular}
+\end{table}
+
+
+\begin{table*}
+	\centering
+	\caption{与baselines对比}
+	\fontsize{6}{8}\selectfont
+	\label{tab3}
+	\begin{tabular}{c | llll | llll | llll }
+		\toprule  % 顶部线
+		\multirow{2}{*}{Model}&\multicolumn{4}{c|}{ICEWS14}&\multicolumn{4}{c|}{ICEWS05-15}&\multicolumn{4}{c}{ICEWS18} \\
+		&MRR&hits@1&hits@3&hits@10&MRR&hits@1&hits@3&hits@10&MRR&hits@1&hits@3&hits@10 \\
+		\midrule  % 中部线
+		Re-Net(2020)&0.4571&-&0.4906&0.5912&-&-&-&-&0.4293&-&0.4547&0.5580 \\
+		TIMEPLEX(2020)&0.6040&0.5150&-&0.7711&0.6399&0.5451&-&0.8181&-&-&-&- \\
+		RE-GCN(2021)&0.4150&0.3086&0.4660&0.6247&0.4641&0.3417&0.5276&0.6764&0.3055&0.2000&0.3473&0.5146 \\
+		CluSTeR(2021)&0.460&0.338&-&0.712&0.446&0.349&-&0.630&0.323&0.206&-&\underline{0.559} \\
+		%CyGNet(2021)&0.4863&0.4177&0.5250&0.6029&-&-&-&-&0.4669&0.4058&0.4982&0.5714 \\
+		TeLM(2021)&0.625&0.545&0.673&0.774&0.678&0.599&0.728&0.823&-&-&-&- \\
+		GHT(2022)&0.3740&0.2777&0.4166&0.5619&0.4150&0.3079&0.4685&0.6273&0.2740&0.1808&0.3076&0.4576 \\
+		TLogic(2022)&0.4304&0.3356&0.4827&0.6123&0.4697&0.3621&0.5313&0.6743&0.2982&0.2054&0.3395&0.4853 \\
+		CEN(2022)&0.4334&0.3318&0.4849&0.6258&-&-&-&-&0.3266&0.2255&0.3681&0.5280 \\
+		RotateQVS(2022)&0.591&0.507&0.642&0.754&0.633&0.592&0.709&0.813&-&-&-&- \\
+		BoxTE(2022)&0.615&0.532&0.667&0.767&0.667&0.576&0.720&0.822&-&-&-&- \\
+		HGLS(2023)&0.4700&0.3506&-&0.7041&0.4621&0.3532&-&0.6712&0.2932&0.1921&-&0.4983 \\
+		TGeomE(2023)&0.629&0.546&0.680&0.780&0.686&0.605&0.736&0.833&-&-&-&- \\
+		HyIE(2023)&0.631&0.563&0.687&0.786&0.704&0.625&0.732&0.831&-&-&-&- \\
+		SToKE(2023)&0.659&0.574&0.693&0.803&0.712&0.605&0.790&\textbf{0.885}&-&-&-&- \\
+		LGCE(2023)&0.667&0.588&0.714&\textbf{0.815}&0.730&0.655&0.776&\underline{0.866}&-&-&-&- \\
+		MPNet(2024)&0.4376&0.3485&0.4823&0.6061&-&-&-&-&-&-&-&- \\
+		QDN(2024)&0.643&0.567&0.688&0.784&0.692&0.611&0.743&0.838&-&-&-&- \\
+		ECEformer(2024)&\underline{0.7170}&\underline{0.6731}&\textbf{0.7360}&\underline{0.8030}&\underline{0.7729}&\underline{0.7311}&\underline{0.7939}&0.8517&\underline{0.4480}&\underline{0.3918}&\underline{0.4689}&0.5531 \\
+		\midrule  % 中部线
+		Ours&\textbf{0.7193}&\textbf{0.6821}&\underline{0.7359}&0.7906&\textbf{0.7741}&\textbf{0.7317}&\textbf{0.7982}&0.8545&\textbf{0.4535}&\textbf{0.3953}&\textbf{0.4803}&\textbf{0.5624} \\
+		\bottomrule  % 底部线
+	\end{tabular}
+\end{table*}
+
+
+\end{document}
