@@ -4,6 +4,15 @@ __pycache__/
 *$py.class
 pyTorch/data/*
 pyTorch/*.pth
+*.pkl
+*.aux
+*.pdf
+*.log
+*.synctex.gz
+*.out
+*.blg
+*.bbl
+
 
 local_*
 colossalChat/test/*
