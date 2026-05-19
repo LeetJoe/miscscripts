@@ -5,7 +5,7 @@ __pycache__/
 pyTorch/data/*
 pyTorch/*.pth
 
-sc_*
+local_*
 colossalChat/test/*
 openai/envvar.py
 */config.py
@@ -32,6 +32,7 @@ downloads/
 eggs/
 .eggs/
 .idea/
+.vscode/
 lib/
 lib64/
 parts/
