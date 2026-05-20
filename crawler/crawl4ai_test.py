@@ -7,8 +7,11 @@ from crawl4ai.markdown_generation_strategy import DefaultMarkdownGenerator
 
 async def main():
 
-    # or False to see the browser
-    browser_conf = BrowserConfig(headless=True)
+    # configure the browser
+    browser_conf = BrowserConfig(
+        # or False to see the browser
+        headless=True,
+    )
 
     # markdown generator with a content filter that prunes content with a score below 0.4
     md_generator = DefaultMarkdownGenerator(
@@ -33,9 +36,9 @@ async def main():
 
         print(result.markdown.raw_markdown)
 
-        print('------------------\n')
+        # print('------------------\n')
 
-        print(result.markdown.fit_markdown)
+        # print(result.markdown.fit_markdown)
 
 
 
