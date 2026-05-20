@@ -11,18 +11,15 @@ async def main():
 
     # schema can generate from c4a assistant
     schema = {
-        "name": "article.juejin.cn Schema",
-        "baseSelector": "div.main-area.article-area > article.article",
+        "name": "News Items",
+        "baseSelector": "tr.athing",
         "fields": [
+            {"name": "title", "selector": "span.titleline a", "type": "text"},
             {
-            "name": "title",
-            "selector": "h1.article-title",
-            "type": "text"
-            },
-            {
-            "name": "content",
-            "selector": "#article-root > div.article-viewer.markdown-body",
-            "type": "nested"
+                "name": "link", 
+                "selector": "span.titleline a", 
+                "type": "attribute", 
+                "attribute": "href"
             }
         ]
     }
@@ -48,7 +45,7 @@ async def main():
 
     async with AsyncWebCrawler(config=browser_conf) as crawler:
         result = await crawler.arun(
-            url="https://article.juejin.cn/post/7455341128783839259",
+            url="https://news.ycombinator.com/newest",
 
             # crawler config
             config=run_conf,
