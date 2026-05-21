@@ -10,7 +10,7 @@ async def main():
     # configure the browser
     browser_conf = BrowserConfig(
         # or False to see the browser
-        # headless=True,
+        headless=True,
     )
 
     md_generator = DefaultMarkdownGenerator(
@@ -22,8 +22,8 @@ async def main():
         # CacheMode.ENABLED, CacheMode.DISABLED, CacheMode.BYPASS
         cache_mode=CacheMode.BYPASS,
 
-        # css_selector="div.rich_media_area_primary_inner > #img-content",
-        # excluded_selector=".code-block-extension-header",
+        css_selector="div.main-area.article-area > article.article",
+        excluded_selector=".code-block-extension-header",
 
         # add markdown generator
         markdown_generator=md_generator,
@@ -31,12 +31,12 @@ async def main():
 
     async with AsyncWebCrawler(config=browser_conf) as crawler:
         result = await crawler.arun(
-            url="https://mp.weixin.qq.com/s/M91es9R9_RkZ1zsM6FPsWA",
+            url="https://juejin.cn/post/7615379311402467354",
             config=run_conf,
         )
 
-        # print(result.markdown.raw_markdown)
-        print(result.html)
+        print(result.markdown.raw_markdown)
+        # print(result.html)
 
 
 
