@@ -53,6 +53,13 @@ def encode_id(text, tokenizer, word_embeddings):
 
     # print(embeddings)
     sentence_vector = hidden_states.mean(dim=0)
+
+    ## ---------------------------------------------- ##
+    # setence_vector 是对输入内容的语义理解，下面的处理方式是将综合语义与所有 embeddings 进行比较，
+    # 找到那个与综合语义最相似的 embedding, 实际上对应一个 token 或者说单词。
+    # 实际效果来看，它会直接映射回原输入短语中的某个单词，导致很多类似的关系短语映射到同一个 token 上，效果不佳。
+    ## ---------------------------------------------- ##
+
     # print(f"合并后的句子向量形状: {sentence_vector.shape}")  # 2560
     similarities = torch.matmul(word_embeddings, sentence_vector)
     closest_word_id = torch.argmax(similarities).item()
