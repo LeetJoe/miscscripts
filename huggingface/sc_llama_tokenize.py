@@ -47,7 +47,8 @@ def extract_embeddings(tsv_path, model_name, output_path, batch_size=32):
         with torch.no_grad():
             outputs = model(**inputs, output_hidden_states=True)
             # Shape: [batch_size, seq_len, hidden_dim]
-            last_hidden_states = outputs.last_hidden_state
+            # last_hidden_states = outputs.last_hidden_state
+            last_hidden_states = outputs.hidden_states[-1]
             
             # Since we used left-padding, the actual text ends exactly at the last index (-1)
             # Grab the last token's hidden state for the whole batch
@@ -62,10 +63,12 @@ def extract_embeddings(tsv_path, model_name, output_path, batch_size=32):
 # --- Execution ---
 if __name__ == "__main__":
     # Replace with your local path or official HuggingFace path (e.g., "meta-llama/Meta-Llama-3-8B")
-    MODEL_PATH = "/data/models/LLaMA3/Llama-3.2-1B"
-
+    MODEL_PATH = "/mnt/data/songchao/hfmodels/LLaMA3/Llama-3.2-1B"
+    # MODEL_PATH = "/mnt/data/songchao/hfmodels/llama/7B"
     origin_entity_map_file = '/home/songchao/work/code/tLogicNet/data/icews14/entitymap.txt'
     origin_relation_map_file = '/home/songchao/work/code/tLogicNet/data/icews14/relationmap.txt'
+    output_entity_embeddings_file = '/home/songchao/work/code/tLogicNet/data/icews14/entity_llama_embeddings.pt'
+    output_relation_embeddings_file = '/home/songchao/work/code/tLogicNet/data/icews14/relation_llama_embeddings.pt'
     
-    extract_embeddings(origin_entity_map_file, MODEL_PATH, "entity_llama_embeddings.pt")
-    extract_embeddings(origin_relation_map_file, MODEL_PATH, "relation_llama_embeddings.pt")
+    extract_embeddings(origin_entity_map_file, MODEL_PATH, output_entity_embeddings_file)
+    extract_embeddings(origin_relation_map_file, MODEL_PATH, output_relation_embeddings_file)
