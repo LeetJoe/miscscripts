@@ -53,7 +53,6 @@ def extract_embeddings(tsv_path, model_name, output_path, batch_size=32):
             # Grab the last token's hidden state for the whole batch
             batch_embeddings = last_hidden_states[:, -1, :].cpu()
             all_embeddings.append(batch_embeddings)
-            
     # 4. Concatenate and save as a single tensor matrix [Num_Elements, Hidden_Dim]
     embedding_matrix = torch.cat(all_embeddings, dim=0)
     torch.save(embedding_matrix, output_path)

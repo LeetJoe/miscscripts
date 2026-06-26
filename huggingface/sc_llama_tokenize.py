@@ -3,7 +3,7 @@ import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from tqdm import tqdm
 
-def extract_embeddings(tsv_path, model_name, output_path, batch_size=32):
+def extract_embeddings(tsv_path, model_name, output_path, batch_size=32, add_reverse=False):
     # 1. Load TSV and sort by ID to ensure strict matrix indexing
     df = pd.read_csv(tsv_path, sep='\t', header=None, names=['id', 'name'])
     df = df.sort_values(by='id').reset_index(drop=True)
@@ -54,9 +54,38 @@ def extract_embeddings(tsv_path, model_name, output_path, batch_size=32):
             # Grab the last token's hidden state for the whole batch
             batch_embeddings = last_hidden_states[:, -1, :].cpu()
             all_embeddings.append(batch_embeddings)
+    
+
+    # 3.5. Add reverse relations if specified
+    if add_reverse:
+        print("Adding reverse relations...")
+        for i in tqdm(range(0, len(names), batch_size)):
+            batch_names = names[i:i + batch_size]
+            
+            # Append EOS token to the end of each text string as per Method 1
+            batch_texts = [f"{text}[inverse]{tokenizer.eos_token}" for text in batch_names]
+            
+            # Tokenize with Left-Padding
+            inputs = tokenizer(
+                batch_texts, 
+                padding=True, 
+                return_tensors="pt"
+            ).to(device)
+            
+            with torch.no_grad():
+                outputs = model(**inputs, output_hidden_states=True)
+                # Shape: [batch_size, seq_len, hidden_dim]
+                # last_hidden_states = outputs.last_hidden_state
+                last_hidden_states = outputs.hidden_states[-1]
+                
+                # Since we used left-padding, the actual text ends exactly at the last index (-1)
+                # Grab the last token's hidden state for the whole batch
+                batch_embeddings = last_hidden_states[:, -1, :].cpu()
+                all_embeddings.append(batch_embeddings)
+
             
     # 4. Concatenate and save as a single tensor matrix [Num_Elements, Hidden_Dim]
-    embedding_matrix = torch.cat(all_embeddings, dim=0)
+    embedding_matrix = torch.cat(all_embeddings, dim=0).float() # Convert to float32 for compatibility with downstream tasks
     torch.save(embedding_matrix, output_path)
     print(f"Successfully saved tensor of shape {embedding_matrix.shape} to {output_path}\n")
 
@@ -71,4 +100,4 @@ if __name__ == "__main__":
     output_relation_embeddings_file = '/home/songchao/work/code/tLogicNet/data/icews14/relation_llama_embeddings.pt'
     
     extract_embeddings(origin_entity_map_file, MODEL_PATH, output_entity_embeddings_file)
-    extract_embeddings(origin_relation_map_file, MODEL_PATH, output_relation_embeddings_file)
+    extract_embeddings(origin_relation_map_file, MODEL_PATH, output_relation_embeddings_file, add_reverse=True)
