@@ -4,7 +4,6 @@ from crawl4ai.content_filter_strategy import PruningContentFilter
 from crawl4ai.markdown_generation_strategy import DefaultMarkdownGenerator
 
 
-
 async def main():
 
     # configure the browser
@@ -39,7 +38,6 @@ async def main():
         # print('------------------\n')
 
         # print(result.markdown.fit_markdown)
-
 
 
 if __name__ == "__main__":
